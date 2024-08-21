@@ -1,6 +1,44 @@
+import ThreeDLogoComp from '../components/common/ThreeDLogo';
+import Button from '../components/common/Button';
+import { useNavigate } from 'react-router-dom';
+
 const Dashboard = () => {
+  const navigate = useNavigate()
   return (
-    <div>Dashboard</div>
+    <div>
+        <ThreeDLogoComp size='large' animate={false} />
+        <Button
+          text="Play With a Friend"
+          color="green"
+          animate
+          size="full"
+          onClick={() => navigate('/game/friend')}
+        />
+
+        <Button
+          text="Play With AI"
+          color="orange"
+          animate
+          size="full"
+          onClick={() => navigate('/game/ai')}
+        />
+
+        <Button
+          text="Create a Game"
+          color="green"
+          animate
+          size="full"
+          onClick={() => navigate('/game/invite')}
+        />
+
+        <Button
+          text="Join a Game"
+          color="orange"
+          animate
+          size="full"
+          onClick={() => navigate('/game/join')}
+        />
+    </div>
   )
 }
 

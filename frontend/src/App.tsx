@@ -1,62 +1,27 @@
-import { useEffect, useState } from 'react';
 import './App.css';
-import { useSocket } from './hooks/useSocket';
-import Loader from './components/common/Loader';
 import ThreeDLogoComp from './components/common/ThreeDLogo';
-import TeamMark from './components/common/TeamMark';
-import AppLogo from './components/common/AppLogo';
 import Button from './components/common/Button';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
-  const { socket } = useSocket();
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleConnect = () => {
-      console.log('Connected to server socket.io');
-    };
-
-    socket.on('connect', handleConnect);
-
-    return () => {
-      socket.off('connect', handleConnect);
-    };
-  }, [socket]);
-
+  const navigate = useNavigate()
   return (
     <div>
-      <h1>Hello World Counter! {count}</h1>
-      <button onClick={() => setCount((prev) => prev + 1)}>Increase</button>
-      <button onClick={() => setCount((prev) => prev - 1)}>Decrease</button>
-
-      <Loader />
-
-      {/* 3D Logo Component  */}
-      <ThreeDLogoComp size="large" animate={true} />
-
-      {/* Team Mark */}
-      <TeamMark />
-
-      {/* App Logo */}
-      <AppLogo size="large" position="center" />
-
-      {/* Sample of the Buttons */}
+      <ThreeDLogoComp size='large' animate={false} />
       <Button
         text="Create Account"
-        color="blue"
+        color="green"
         animate
         size="full"
-        onClick={(e) => alert(`Button ${e.currentTarget.textContent} Clicked!`)}
+        onClick={() => navigate('/signup')}
       />
 
       <Button
         text="Login to Start Game"
-        color="green"
+        color="blue"
         animate
         size="full"
-        onClick={(e) => alert(`Button ${e.currentTarget.textContent} Clicked!`)}
+        onClick={() => navigate('/login')}
       />
 
       <Button
@@ -64,10 +29,10 @@ function App() {
         color="orange"
         animate
         size="full"
-        onClick={(e) => alert(`Button ${e.currentTarget.textContent} Clicked!`)}
+        onClick={() => navigate('/dashboard')}
       />
     </div>
-  );
+  )
 }
 
 export default App;
