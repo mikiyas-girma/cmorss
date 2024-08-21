@@ -1,8 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
+import { useSocket } from './hooks/useSocket';
 
 function App() {
+  const { socket } = useSocket()
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleConnect = () => {
+      console.log('Connected to server socket.io');
+    };
+
+    socket.on('connect', handleConnect);
+
+    return () => {
+      socket.off('connect', handleConnect);
+    };
+  }, [socket]);
 
   return (
     <div>
