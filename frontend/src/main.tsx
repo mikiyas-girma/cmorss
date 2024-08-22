@@ -11,6 +11,7 @@ import App from './App.tsx';
 import Login from './routes/Login.tsx';
 import Register from './routes/Register.tsx';
 import Room from './routes/GameRoom.tsx';
+import Dashboard from './routes/Dashboard.tsx';
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <App />,
+      },
+      {
+        path: "/dashboard",
+        element: <Dashboard />,
       },
       {
         path: "/login",

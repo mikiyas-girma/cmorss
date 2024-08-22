@@ -1,8 +1,10 @@
+import { Link } from 'react-router-dom';
 import { Logo } from '../../assets';
 
 type AppLogo = {
   size: 'large' | 'small';
   position: 'left' | 'center';
+  className?: string;
 };
 
 /**
@@ -12,16 +14,16 @@ type AppLogo = {
  * @returns JSX
  */
 
-const AppLogo: React.FC<AppLogo> = ({ size, position }) => {
+const AppLogo: React.FC<AppLogo> = ({ size, position, className }) => {
   const width =
     size === 'large' ? 'w-[250px] md:w-[300px]' : 'w-[80px] md:w-[120px]';
   const place = position === 'center' ? 'mx-auto' : '';
 
   //   Return JSX of the Appropriate 3d Logo
   return (
-    <div className={`overflow-hidden mx-auto ${place}  ${width}`}>
-      <img src={Logo} alt="3d Logo Tic-Tac" className="w-full object-contain" />
-    </div>
+    <Link className={`overflow-hidden ${place} ${width} ${className}`} to="/">
+        <img src={Logo} alt="3d Logo Tic-Tac" className="w-full object-contain" />
+    </Link>
   );
 };
 

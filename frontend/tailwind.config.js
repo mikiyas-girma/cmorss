@@ -36,6 +36,9 @@ export default {
           '50%': { transform: 'scaleX(1.05)' },
         },
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(circle, var(--tw-gradient-stops))',
+      },
     },
   },
   plugins: [],
