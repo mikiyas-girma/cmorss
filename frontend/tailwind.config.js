@@ -14,10 +14,14 @@ export default {
         'secondary-green': '#00B507',
         'primary-orange': '#C23A00',
         'secondary-orange': '#EF940A',
+        'primary-gray-green': '#415E45',
+        'secondary-gray-green': '#7D977E',
+        'text-gray': '#A29F9F',
+        'container-gray': '#E6E6E6',
       },
 
       animation: {
-        loading: 'loading 2s ease-in-out forwards',
+        loading: 'loading 1s ease-in-out forwards',
         scaling: 'scaling 3s ease-in-out infinite',
         animateBtn: 'animateBtn 3s ease-in-out infinite',
       },

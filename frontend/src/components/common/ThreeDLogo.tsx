@@ -13,7 +13,7 @@ type ThreeDType = {
 const ThreeDLogoComp: React.FC<ThreeDType> = ({ size, animate }) => {
   const width =
     size === 'large'
-      ? 'w-[400px]'
+      ? 'sm:w-[400px]'
       : size === 'medium'
       ? 'w-[200px]'
       : 'w-[100px]';
@@ -21,7 +21,7 @@ const ThreeDLogoComp: React.FC<ThreeDType> = ({ size, animate }) => {
   //   Return JSX of the Appropriate 3d Logo
   return (
     <div
-      className={`overflow-hidden mx-auto ${
+      className={`overflow-hidden mx-auto -mb-8 ${
         animate ? 'animate-scaling' : ''
       } ${width}`}
     >

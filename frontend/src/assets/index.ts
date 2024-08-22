@@ -5,4 +5,6 @@ import avatarSceneBg from '/backgrounds/avatar-scene.jpeg';
 import gameSceneBg from '/backgrounds/game-scene.jpeg';
 import starImage from '/images/gold_star.png';
 
+
 export { Logo, ThreeDLogo, gameLoungeBg, avatarSceneBg, gameSceneBg, starImage };
+

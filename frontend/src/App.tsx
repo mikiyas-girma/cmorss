@@ -4,10 +4,10 @@ import Button from './components/common/Button';
 import { useNavigate } from 'react-router-dom';
 
 function App() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
-    <div>
-      <ThreeDLogoComp size='large' animate={false} />
+    <div className="overflow-x-hidden w-full">
+      <ThreeDLogoComp size="large" animate={false} />
       <Button
         text="Create Account"
         color="green"
@@ -32,7 +32,7 @@ function App() {
         onClick={() => navigate('/dashboard')}
       />
     </div>
-  )
+  );
 }
 
 export default App;
