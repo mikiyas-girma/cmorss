@@ -20,7 +20,7 @@ const Dashboard = () => {
         color="orange"
         animate
         size="full"
-        onClick={() => navigate('/game/ai')}
+        onClick={() => navigate('/play/ai')}
       />
 
       <Button

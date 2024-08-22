@@ -11,11 +11,12 @@ const Root = () => {
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const path = location.pathname;
+  console.log('THE PATH: ', path);
 
   const backgroundImage =
     path == '/dashboard'
       ? `url(${gameLoungeBg})`
-      : path.includes('/game/')
+      : path.includes('/game/') || path.includes('/play/')
       ? `url(${gameSceneBg})`
       : '';
 
@@ -28,13 +29,16 @@ const Root = () => {
   return (
     <div className="py-4 min-h-screen overflow-x-hidden flex flex-col items-center justify-between relative">
       {/* Page Background */}
-      <div style={{ backgroundImage }} className="absolute inset-0 -z-10" />
+      <div
+        style={{ backgroundImage }}
+        className="absolute inset-0 -z-10 sm:bg-cover"
+      />
       {/* Dim Background Overlay */}
       {backgroundImage && (
         <div className="absolute inset-0 -z-10 bg-black opacity-30" />
       )}
 
-      <SplashScreen loading={loading} />
+      <SplashScreen loading={loading && path === '/'} />
 
       {/* Page Content */}
 
