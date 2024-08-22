@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Avatar from '../components/gameRoom/Avatar';
 import Box from '../components/gameRoom/Box';
+import GameEnd from '../components/gameRoom/GameEnd';
 
 type Player = 'X' | 'O' | null;
 type Board = Player[];
@@ -30,8 +31,8 @@ const GameRoom: React.FC = () => {
         </p>
         <div className='w-full grid grid-cols-3 place-items-center'>
           <Box top='Score' score='00' bottom='Player X' color={currentPlayer == 'X'? 'orange' : 'green'}/>
-          <Box top='Draw' score='00' />
-          <Box top='Score' score='00' bottom='Player O' color={currentPlayer == 'O'? 'orange' : 'green'} />
+          <Box top='Draw' score='00' color={currentPlayer == 'X'? 'orange' : 'green'}/>
+          <Box top='Score' score='00' bottom='Player O' color={currentPlayer == 'X'? 'orange' : 'green'} />
         </div>
       </div>
 
@@ -46,6 +47,8 @@ const GameRoom: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {!board.includes(null) && <GameEnd />}
     </div>
   );
 };
