@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Avatar from '../components/gameRoom/Avatar';
 import Box from '../components/gameRoom/Box';
+import GameEnd from '../components/gameRoom/GameEnd';
 
 type Player = 'X' | 'O' | null;
 type Board = Player[];
@@ -27,6 +28,7 @@ const GameRoom: React.FC = () => {
         <p className="w-3/4 mx-auto py-1.5 bg-gradient-radial from-[#7D977E] to-[#415E45] rounded-xl text-white text-center font-bold">
           GAME STATS
         </p>
+
         <div className="w-full grid grid-cols-3 place-items-center">
           <Box
             top="Score"
@@ -41,6 +43,7 @@ const GameRoom: React.FC = () => {
             bottom="Player O"
             color={currentPlayer == 'O' ? 'orange' : 'green'}
           />
+
         </div>
       </div>
 
@@ -55,6 +58,8 @@ const GameRoom: React.FC = () => {
           </button>
         ))}
       </div>
+
+      {!board.includes(null) && <GameEnd />}
     </div>
   );
 };
