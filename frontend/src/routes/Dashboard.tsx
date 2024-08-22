@@ -3,43 +3,43 @@ import Button from '../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   return (
     <div>
-        <ThreeDLogoComp size='large' animate={false} />
-        <Button
-          text="Play With a Friend"
-          color="green"
-          animate
-          size="full"
-          onClick={() => navigate('/game/friend')}
-        />
+      <ThreeDLogoComp size="large" animate />
+      <Button
+        text="Play With a Friend"
+        color="green"
+        animate
+        size="full"
+        onClick={() => navigate('/game/friend')}
+      />
 
-        <Button
-          text="Play With AI"
-          color="orange"
-          animate
-          size="full"
-          onClick={() => navigate('/game/ai')}
-        />
+      <Button
+        text="Play With AI"
+        color="orange"
+        animate
+        size="full"
+        onClick={() => navigate('/game/ai')}
+      />
 
-        <Button
-          text="Create a Game"
-          color="green"
-          animate
-          size="full"
-          onClick={() => navigate('/game/invite')}
-        />
+      <Button
+        text="Create a Game"
+        color="blue"
+        animate
+        size="full"
+        onClick={() => navigate('/game/invite')}
+      />
 
-        <Button
-          text="Join a Game"
-          color="orange"
-          animate
-          size="full"
-          onClick={() => navigate('/game/join')}
-        />
+      <Button
+        text="Join a Game"
+        color="orange"
+        animate
+        size="full"
+        onClick={() => navigate('/game/join')}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

@@ -4,5 +4,4 @@ import gameLoungeBg from '/backgrounds/game-lounge.jpeg';
 import avatarSceneBg from '/backgrounds/avatar-scene.jpeg';
 import gameSceneBg from '/backgrounds/game-scene.jpeg';
 
-
 export { Logo, ThreeDLogo, gameLoungeBg, avatarSceneBg, gameSceneBg };

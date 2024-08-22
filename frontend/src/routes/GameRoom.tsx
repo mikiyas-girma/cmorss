@@ -23,15 +23,24 @@ const GameRoom: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center space-y-12">
-
       <div className="w-full space-y-4">
-        <p className='w-3/4 mx-auto py-1.5 bg-gradient-radial from-[#7D977E] to-[#415E45] rounded-xl text-white text-center font-bold'>
+        <p className="w-3/4 mx-auto py-1.5 bg-gradient-radial from-[#7D977E] to-[#415E45] rounded-xl text-white text-center font-bold">
           GAME STATS
         </p>
-        <div className='w-full grid grid-cols-3 place-items-center'>
-          <Box top='Score' score='00' bottom='Player X' color={currentPlayer == 'X'? 'orange' : 'green'}/>
-          <Box top='Draw' score='00' />
-          <Box top='Score' score='00' bottom='Player O' color={currentPlayer == 'O'? 'orange' : 'green'} />
+        <div className="w-full grid grid-cols-3 place-items-center">
+          <Box
+            top="Score"
+            score="00"
+            bottom="Player X"
+            color={currentPlayer == 'X' ? 'orange' : 'green'}
+          />
+          <Box top="Draw" score="00" color="blue" />
+          <Box
+            top="Score"
+            score="00"
+            bottom="Player O"
+            color={currentPlayer == 'O' ? 'orange' : 'green'}
+          />
         </div>
       </div>
 

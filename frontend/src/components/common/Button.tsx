@@ -5,8 +5,10 @@ import getColorGradient from '../../utils/getColorGradient';
 type ButtonType = {
   color: 'green' | 'blue' | 'orange';
   text: string;
-  animate: boolean;
+  animate?: boolean;
   size: 'full' | 'content-fit';
+  disabled?: boolean;
+  loading?: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
 };
 
@@ -24,6 +26,8 @@ const Button: React.FC<ButtonType> = ({
   animate,
   size,
   onClick,
+  disabled = false,
+  loading,
 }) => {
   // Pick conditional classes
   const colorChoice = getColorGradient(color);
@@ -34,9 +38,15 @@ const Button: React.FC<ButtonType> = ({
     <div
       className={`overflow-hidden p-3 px-6 rounded-lg text-white font-poppins font-semibold my-3 mx-auto text-center min-w-[280px] ${btnSize} ${
         animate && 'animate-animateBtn'
-      } ${colorChoice}`}
+      } ${!loading && colorChoice} ${
+        loading && 'animate-pulse bg-slate-500 cursor-not-allowed'
+      }`}
     >
-      <button onClick={onClick} className={`h-full w-full`}>
+      <button
+        onClick={onClick}
+        className={`h-full w-full ${disabled && 'disabled:cursor-not-allowed'}`}
+        disabled={disabled}
+      >
         {text}
       </button>
     </div>
