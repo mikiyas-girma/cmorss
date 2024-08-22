@@ -16,7 +16,7 @@ const Root = () => {
   const backgroundImage =
     path == '/dashboard'
       ? `url(${gameLoungeBg})`
-      : path.includes('/game/')
+      : path.includes('/game/') || path.includes('/play/')
       ? `url(${gameSceneBg})`
       : '';
 

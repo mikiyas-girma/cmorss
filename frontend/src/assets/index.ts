@@ -4,7 +4,14 @@ import gameLoungeBg from '/backgrounds/game-lounge.jpeg';
 import avatarSceneBg from '/backgrounds/avatar-scene.jpeg';
 import gameSceneBg from '/backgrounds/game-scene.jpeg';
 import starImage from '/images/gold_star.png';
+import drawGame from '/images/draw-game-mode.png';
 
-
-export { Logo, ThreeDLogo, gameLoungeBg, avatarSceneBg, gameSceneBg, starImage };
-
+export {
+  Logo,
+  ThreeDLogo,
+  gameLoungeBg,
+  avatarSceneBg,
+  gameSceneBg,
+  starImage,
+  drawGame,
+};
