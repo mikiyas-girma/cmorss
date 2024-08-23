@@ -5,16 +5,20 @@ import { gameLoungeBg, gameSceneBg } from '../assets';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import SplashScreen from '../components/SplashScreen';
+import AudioPlayer from '../components/feature/AudioPlayer';
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BackButton from '../components/common/BackButton';
 
 const Root = () => {
   // Set up Loader
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const path = location.pathname;
-  console.log('THE PATH: ', path);
 
   const backgroundImage =
-    path == '/dashboard'
+    path == '/dashboard' || path.startsWith('/room/')
       ? `url(${gameLoungeBg})`
       : path.includes('/game/') || path.includes('/play/')
       ? `url(${gameSceneBg})`
@@ -40,11 +44,13 @@ const Root = () => {
 
       <SplashScreen loading={loading && path === '/'} />
 
-      {/* Page Content */}
-
       <AppLogo className="self-start" size="small" position="left" />
+      <AudioPlayer audioSrc="/music.mp3" />
+      {/* Page Content */}
       <Outlet />
+      <ToastContainer />
       <TeamMark light={!!backgroundImage} />
+      <BackButton />
     </div>
   );
 };
