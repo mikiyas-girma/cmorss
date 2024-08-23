@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { authRouter } from "./auth";
-import { roomRouter } from "./room";
-import { scoreRouter } from "./score";
+import { authRouter } from "./auth.js";
+import { roomRouter } from "./room.js";
+import { scoreRouter } from "./score.js";
 
 const apiRouter = Router();
 
