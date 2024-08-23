@@ -16,7 +16,7 @@ export type AudioPlayerProps = {
 };
 
 export type User = {
-  username: string;
+  pseudo: string;
   wins: number;
   losses: number;
   draws: number;
