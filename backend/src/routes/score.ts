@@ -1,7 +1,7 @@
-import { Router } from "express";
+import { Router } from 'express';
 
 const scoreRouter = Router();
 
-scoreRouter.get('/', /* TODO: create and use score crontroller */ )
+// scoreRouter.get('/', /* TODO: create and use score crontroller */ )
 
 export { scoreRouter };

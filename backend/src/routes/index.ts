@@ -1,12 +1,10 @@
-import { Router } from "express";
-import { authRouter } from "./auth";
-import { roomRouter } from "./room";
-import { scoreRouter } from "./score";
+import { Router } from 'express';
+import { authRouter } from './auth.js';
+import { scoreRouter } from './score.js';
 
 const apiRouter = Router();
 
 apiRouter.use('/auth', authRouter);
-apiRouter.use('/room', roomRouter);
 apiRouter.use('/score', scoreRouter);
 
 // To test the api

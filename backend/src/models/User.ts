@@ -4,6 +4,10 @@ import uniqueValidator from 'mongoose-unique-validator';
 export interface UserDoc extends mongoose.Document {
 	pseudo: string
 	password: string
+	gamePlayed: number
+	wins: number
+	loses: number
+	draws: number
 	createdAt: Date
 	updatedAt: Date
 }
@@ -17,6 +21,26 @@ const userSchema = new mongoose.Schema({
   password: {
 		type: String,
 		required: true
+	},
+	gamePlayed: {
+		type:mongoose.Schema.Types.Number,
+		required: true,
+		default: 0,
+	},
+	wins: {
+		type:mongoose.Schema.Types.Number,
+		required: true,
+		default: 0,
+	},
+	loses: {
+		type:mongoose.Schema.Types.Number,
+		required: true,
+		default: 0,
+	},
+	draws: {
+		type:mongoose.Schema.Types.Number,
+		required: true,
+		default: 0,
 	},
 	createdAt: {
 		type: mongoose.Schema.Types.Date,
