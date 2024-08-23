@@ -24,13 +24,14 @@ export default {
         loading: 'loading 1s ease-in-out forwards',
         scaling: 'scaling 3s ease-in-out infinite',
         animateBtn: 'animateBtn 3s ease-in-out infinite',
+        bounce: 'bounce 0.5s linear',
       },
-
       keyframes: {
         loading: {
           '0%': { width: '0%' },
           '100%': { width: '100%' },
         },
+
         scaling: {
           '0%, 100%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.2)' },
@@ -38,6 +39,12 @@ export default {
         animateBtn: {
           '0%, 100%': { transform: 'scale(1)' },
           '50%': { transform: 'scaleX(1.05)' },
+        },
+        bounce: {
+          '0%': { transform: 'translate(0, 0) scale(1)' },
+          '50%': { transform: 'translate(0, 0) scale(0.5)' },
+          '70%': { transform: 'translate(0, 0) scale(0.85)' },
+          '100%': { transform: 'translate(0, 0) scale(1)' },
         },
       },
       backgroundImage: {

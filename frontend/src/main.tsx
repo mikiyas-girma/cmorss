@@ -10,6 +10,9 @@ import Register from './routes/Register.tsx';
 import Room from './routes/GameRoom.tsx';
 import Dashboard from './routes/Dashboard.tsx';
 import AIGameBoard from './routes/AIGameBoard.tsx';
+import { AppStateProvider } from './contexts/AppStateContext.tsx';
+import JoinRoom from './routes/JoinRoom.tsx';
+import CreateRoom from './routes/CreateRoom.tsx';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +39,8 @@ const router = createBrowserRouter([
         path: '/play/ai',
         element: <AIGameBoard />,
       },
+      { path: '/room/create', element: <CreateRoom /> },
+      { path: '/room/join', element: <JoinRoom /> },
       {
         path: '/game/:id',
         element: <Room />,
@@ -47,7 +52,9 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <SocketProvider>
-      <RouterProvider router={router} />
+      <AppStateProvider>
+        <RouterProvider router={router} />
+      </AppStateProvider>
     </SocketProvider>
   </React.StrictMode>
 );

@@ -12,7 +12,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   // Handle User Registration
-  const handleRegistration = () => {
+  const handleLogin = () => {
     setError(null);
     setLoading(true);
 
@@ -65,7 +65,7 @@ const Login = () => {
         color="blue"
         size="full"
         text={loading ? 'Loading. Please wait...' : 'Login Now'}
-        onClick={handleRegistration}
+        onClick={handleLogin}
       />
 
       <Link to={'/signup'}>

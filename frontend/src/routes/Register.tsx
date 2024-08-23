@@ -4,6 +4,7 @@ import ThreeDLogoComp from '../components/common/ThreeDLogo';
 import Button from '../components/common/Button';
 import validateRegistrationForm from '../utils/validateRegistrationForm';
 import { Link } from 'react-router-dom';
+import { toastError } from '../utils/toast';
 
 const Register = () => {
   // Define States
@@ -21,6 +22,7 @@ const Register = () => {
 
     if (errorMsg) {
       setError(errorMsg);
+      toastError(errorMsg);
       return;
     }
 

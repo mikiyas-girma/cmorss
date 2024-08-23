@@ -28,7 +28,7 @@ const Dashboard = () => {
         color="blue"
         animate
         size="full"
-        onClick={() => navigate('/game/invite')}
+        onClick={() => navigate('/room/create')}
       />
 
       <Button
@@ -36,7 +36,7 @@ const Dashboard = () => {
         color="orange"
         animate
         size="full"
-        onClick={() => navigate('/game/join')}
+        onClick={() => navigate('/room/join')}
       />
     </div>
   );

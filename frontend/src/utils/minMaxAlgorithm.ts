@@ -3,7 +3,7 @@ import { checkWinner } from './checkWinner';
 
 //Allow the AI to be beatable
 // Difficulty level: 0 (easiest) to 1 (hardest)
-const findBestMove = (board: Board, difficultyLevel: number = 0.8): number => {
+const findBestMove = (board: Board, difficultyLevel: number = 1): number => {
   let bestScore = -Infinity;
   let bestMoves: number[] = [];
 
