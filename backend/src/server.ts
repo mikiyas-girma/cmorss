@@ -1,19 +1,22 @@
-import 'dotenv/config';
 import express from 'express';
-import { Request, Response } from 'express';
+import apiRouter from './routes/index.js';
 
 const app = express();
-
+const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const PORT = process.env.PORT || 3001;
+app.use('/api/v1', apiRouter);
 
-app.get('/api', (req: Request, res: Response) => {
-  res.status(200).json({ message: 'Hello from the server! nice' });
-});
+async function startServer() {
+  try {
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch(error) {
+    console.error('Error starting the server:', error);
+  }
+}
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+startServer();
