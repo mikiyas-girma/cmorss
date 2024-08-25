@@ -1,4 +1,4 @@
-enum SocketEvent {
+export enum SocketEvent {
 	CONNECTION = 'connection', // Event raised when a user connect to a room
 	CREATE_ROOM = 'createRoom', // Event raised when a user create a room
 	JOIN_ROOM = 'joinRoom', // Event raised when a user ask for join a room
