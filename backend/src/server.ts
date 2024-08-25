@@ -1,12 +1,13 @@
 import http from 'http';
 import express from 'express';
-import { Server } from 'socket.io'
 import apiRouter from './routes/index.js';
+import { initSocketIo } from './io.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const server = http.createServer(app);
-const socket = new Server(server);
+
+initSocketIo(server)
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
