@@ -1,32 +1,25 @@
-import express from 'express';
-import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import userRoutes from './routes/user.ts';
-import authRoutes from './routes/auth.ts';
+import http from 'http';
+import mongoose from 'mongoose';
+import express from 'express';
+import { initSocketIo } from './io.js';
+import apiRouter from './routes/index.js';
 
 dotenv.config();
 
-mongoose.connect(process.env.MONGODB!).then(()=>{
-  console.log("Connected to MongoDB");
-}
-).catch((err)=>{
-  console.log("Connection failed");
-  console.log(err);
-});
+const app = express();
+const PORT = process.env.PORT || 3001;
+const server = http.createServer(app);
+
+initSocketIo(server)
 
 const app = express();
 app.use(express.json());
 
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
-
-app.use('/api/user', userRoutes);
-app.use("/api/auth", authRoutes);
-
 app.use((err: any, req: any, res: any, next: any) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
+
 
   res.status(statusCode).json({ 
     success: false,
@@ -34,3 +27,19 @@ app.use((err: any, req: any, res: any, next: any) => {
     message
    });
 });
+
+function startServer() {
+  mongoose.connect(process.env.MONGODB!).then(()=>{
+    console.log("Connected to MongoDB");
+    server.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  })
+  .catch((err)=>{
+    console.log("Connection failed");
+    console.log(err);
+  });
+}
+
+startServer();
+
