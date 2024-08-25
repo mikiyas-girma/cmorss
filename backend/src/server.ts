@@ -13,7 +13,6 @@ const server = http.createServer(app);
 
 initSocketIo(server)
 
-const app = express();
 app.use(express.json());
 
 app.use((err: any, req: any, res: any, next: any) => {

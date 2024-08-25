@@ -1,5 +1,6 @@
 import http from 'http';
 import { Server, Socket } from 'socket.io'
+import { SocketEvent } from './utils/socketEvents.js';
 
 let cachedIo: Server | null = null;
 
@@ -7,7 +8,8 @@ async function joinSocketToRoom (socket: Socket, roomId: string) {
 	try {
 		await socket.join(roomId);
 		console.log(`User ${socket.id} joined room ${roomId}`);
-		cachedIo.emit(SocketEvent.ROOM_JOINED);
+        cachedIo?.emit(SocketEvent.ROOM_JOINED);
+
 	} catch (error) {
 		console.error(`Invalid room id: ${roomId}`);
 		socket.emit(SocketEvent.ERROR, { error });
@@ -15,7 +17,7 @@ async function joinSocketToRoom (socket: Socket, roomId: string) {
 }
 
 function getRoom(roomId: string) {
-	return !!cachedIo.sockets.adapter.rooms[roomId];
+	return !!cachedIo?.sockets.adapter.rooms.get(roomId);
 }
 
 function checkMovePosition(position: [number, number]) {
@@ -59,7 +61,7 @@ function initSocketIo(httpServerInstance: http.Server<typeof http.IncomingMessag
 				roomId: string
 			}) => {
 				if (checkMovePosition(moveData.position) && socket.rooms.has(moveData.roomId)) {
-					const emited = cachedIo.to(moveData.roomId).emit(SocketEvent.MOVE_MADE, moveData);
+					const emited = cachedIo?.to(moveData.roomId).emit(SocketEvent.MOVE_MADE, moveData);
 
 					if (!emited) {
 							console.error(`Failled to emit event for user ${socket.id}`);
@@ -77,10 +79,10 @@ function initSocketIo(httpServerInstance: http.Server<typeof http.IncomingMessag
 				const room = getRoom(roomId);
 
 				if (room) {
-						cachedIo.sockets.adapter.rooms.delete(roomId);
+						cachedIo?.sockets.adapter.rooms.delete(roomId);
 						
 						console.log(`Room ${roomId} deleted`);
-						cachedIo.to(roomId).emit('roomDeleted', { message: 'The room has been deleted.' });
+						cachedIo?.to(roomId).emit('roomDeleted', { message: 'The room has been deleted.' });
 				} else {
 						console.error(`Room ${roomId} does not exist.`);
 						socket.emit('error', { message: 'Room does not exist.' });
