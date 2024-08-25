@@ -1,8 +1,10 @@
-import { Router } from "express";
+import express from 'express';
+import { signin, signup } from '../controllers/auth.controllers.ts';
 
-const authRouter = Router();
+const router = express.Router();
 
-// authRouter.post('/signup', /* TODO: create and use signup crontroller */ )
-// authRouter.post('/login', /* TODO: create and use login crontroller */ )
+router.post("/signup", signup);
+router.post("/signin", signin);
 
-export { authRouter };
+
+export default router;
