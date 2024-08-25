@@ -3,17 +3,21 @@ import http from 'http';
 import mongoose from 'mongoose';
 import express from 'express';
 import { initSocketIo } from './io.js';
-import apiRouter from './routes/index.js';
+import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+}));
+
 const PORT = process.env.PORT || 3001;
 const server = http.createServer(app);
 
 initSocketIo(server)
 
-const app = express();
 app.use(express.json());
 
 app.use((err: any, req: any, res: any, next: any) => {
