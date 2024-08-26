@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import express from 'express';
 import { initSocketIo } from './io.js';
 import authRouter from './routes/auth.js';
+import apiRouter from './routes/index.js';
 
 import cors from 'cors';
 
@@ -23,6 +24,7 @@ initSocketIo(server)
 
 
 app.use("/api/auth", authRouter);
+app.use("/api", apiRouter); 
 
 app.use((err: any, req: any, res: any, next: any) => {
   const statusCode = err.statusCode || 500;
