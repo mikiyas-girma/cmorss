@@ -29,10 +29,10 @@ const CreateRoom: React.FC = () => {
   };
 
   const createRoom = () => {
-    socket?.emit('createRoom', roomID);
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
+      socket?.emit('createRoom', roomID);
       navigate(`/game/${roomID}`);
     }, 2000);
   };
