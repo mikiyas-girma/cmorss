@@ -7,7 +7,7 @@ const validateRegistrationForm = (form: FormType) => {
   let error: string | null = null;
 
   if (form.pseudo.trim().length < 8) {
-    error = 'Please chose a pseudo of atleast 8 characters';
+    error = 'Please chose a username of atleast 8 characters';
   } else if (form.password.trim().length < 8) {
     error = 'Your password needs to be atleast 8 characters.';
   } else if (form.password.trim() !== form.confirmPassword.trim()) {
