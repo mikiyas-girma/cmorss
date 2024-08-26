@@ -3,6 +3,8 @@ import Avatar from '../components/gameRoom/Avatar';
 import Box from '../components/gameRoom/Box';
 import GameEnd from '../components/gameRoom/GameEnd';
 import { checkWinner } from '../utils/checkWinner';
+import { useSocket } from '../hooks/useSocket';
+import { useParams } from 'react-router-dom';
 
 type Player = 'X' | 'O' | null;
 type Board = Player[];
@@ -15,8 +17,19 @@ const GameRoom: React.FC = () => {
   const [board, setBoard] = useState<Board>(initialBoard);
   const [currentPlayer, setCurrentPlayer] = useState<Player>('X');
   const [winner, setWinner] = useState<string | null>(null);
-
   const [score, setScore] = useState(initScore);
+
+  const {socket} = useSocket();
+  const {id}  = useParams();
+
+  useEffect(() => {
+    if (!socket) return;
+    socket.emit('joinRoom', id)
+    
+    return () => {
+      socket.off('joinRoom');
+    }
+  }, [socket]);
 
   const handleCellClick = (index: number) => {
     if (board[index]) return;

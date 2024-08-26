@@ -10,8 +10,22 @@ import AudioPlayer from '../components/feature/AudioPlayer';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BackButton from '../components/common/BackButton';
+import { runSocket } from '../utils/socket';
+import { useSocket } from '../hooks/useSocket';
 
 const Root = () => {
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    runSocket(socket);
+
+    return () => {
+      socket.off
+    }
+  }, [socket]);
+
   // Set up Loader
   const [loading, setLoading] = useState(true);
   const location = useLocation();
