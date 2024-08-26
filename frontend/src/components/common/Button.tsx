@@ -33,6 +33,12 @@ const Button: React.FC<ButtonType> = ({
   const colorChoice = getColorGradient(color);
   const btnSize = size === 'full' ? 'w-[80%] max-w-[300px]' : 'w-fit';
 
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const sound = new Audio('/sound/button-sound.wav');
+    sound.play();
+    onClick(event);
+  }
+
   // Return JSX Component
   return (
     <div
@@ -43,7 +49,7 @@ const Button: React.FC<ButtonType> = ({
       }`}
     >
       <button
-        onClick={onClick}
+        onClick={handleClick}
         className={`h-full w-full ${disabled && 'disabled:cursor-not-allowed'}`}
         disabled={disabled}
       >
