@@ -13,7 +13,7 @@ import AIGameBoard from "./routes/AIGameBoard.tsx";
 import { AppStateProvider } from "./contexts/AppStateContext.tsx";
 import JoinRoom from "./routes/JoinRoom.tsx";
 import CreateRoom from "./routes/CreateRoom.tsx";
-import { GameProvider } from "./contexts/GameContexr.tsx";
+import { GameProvider } from "./contexts/GameContext.tsx";
 
 const router = createBrowserRouter([
   {
