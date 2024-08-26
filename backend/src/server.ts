@@ -3,11 +3,15 @@ import http from 'http';
 import mongoose from 'mongoose';
 import express from 'express';
 import { initSocketIo } from './io.js';
+import authRouter from './routes/auth.js';
+import apiRouter from './routes/index.js';
+
 import cors from 'cors';
 
 dotenv.config();
 
 const app = express();
+app.use(express.json());
 
 app.use(cors({
   origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
@@ -18,7 +22,9 @@ const server = http.createServer(app);
 
 initSocketIo(server)
 
-app.use(express.json());
+
+app.use("/api/auth", authRouter);
+app.use("/api", apiRouter); 
 
 app.use((err: any, req: any, res: any, next: any) => {
   const statusCode = err.statusCode || 500;
