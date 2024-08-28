@@ -24,7 +24,7 @@ const Dashboard = () => {
         color="orange"
         animate
         size="full"
-        onClick={() => navigate('/play/ai')}
+        onClick={() => navigate('/game/ai')}
       />
 
       {app.user && (
@@ -47,7 +47,7 @@ const Dashboard = () => {
         </>
       )}
 
-      {app.guest === false && app.user && (
+      {app.user && (
         <Button
           text="Log Out"
           color="red"

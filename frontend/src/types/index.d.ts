@@ -31,5 +31,11 @@ export type AppState = {
     ai: number;
     draw: number;
   };
-  guest: boolean;
 };
+
+export type GameState = {
+  board: Board;
+  currentPlayer: Player;
+  winner: Player | null;
+  avatar: Player;
+}
