@@ -3,7 +3,7 @@
 import getColorGradient from '../../utils/getColorGradient';
 
 type ButtonType = {
-  color: 'green' | 'blue' | 'orange';
+  color: 'green' | 'blue' | 'orange' | 'red';
   text: string;
   animate?: boolean;
   size: 'full' | 'content-fit';
@@ -33,11 +33,13 @@ const Button: React.FC<ButtonType> = ({
   const colorChoice = getColorGradient(color);
   const btnSize = size === 'full' ? 'w-[80%] max-w-[300px]' : 'w-fit';
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     const sound = new Audio('/sound/button-sound.wav');
     sound.play();
     onClick(event);
-  }
+  };
 
   // Return JSX Component
   return (
