@@ -94,7 +94,7 @@ const GameRoom: React.FC = () => {
       <Box bottom="Turn" score={`${currentPlayer}`} color={currentPlayer === 'X'? 'orange' : 'green'}/>
       {(isADraw || winner) && (
         <GameEnd
-          player={winner!}
+          winner={winner!}
           isDraw={isADraw}
           onRestart={() => {
             if (isADraw) setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
