@@ -21,9 +21,9 @@ const AIGame = ({ gameState, setGameState }: AIGameProps) => {
 
   // handle ai turn
   useEffect(() => {
-    const boardFull = !board.includes(null);
-    boardFull && setIsAITurn(false);
-    if (isAITurn && !winner && !boardFull) {
+    const gameEnd = !board.includes(null) || !!winner;
+    gameEnd && setIsAITurn(false);
+    if (isAITurn && !gameEnd) {
       const makeAIMove = () => {
         const bestMove = findBestMove(board);
         if (bestMove !== null) {

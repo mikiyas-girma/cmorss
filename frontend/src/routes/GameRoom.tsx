@@ -30,10 +30,10 @@ const GameRoom: React.FC = () => {
     if (findWinner) {
       setGameState((prev) => ({ ...prev, winner: findWinner }));
       setScore((prev) => ({ ...prev, [findWinner]: prev[findWinner] + 1 }));
-      // Update AI Score in App State
-      if (id === "ai") {
-        updateAIGameScore(setAppState, findWinner);
-      }
+    }
+    // Update AI Score in App State
+    if (id === "ai" && (findWinner || !board.includes(null))) {
+      updateAIGameScore(setAppState, findWinner);
     }
   }, [board, currentPlayer, setGameState, setAppState, id]);
 
@@ -106,7 +106,8 @@ const GameRoom: React.FC = () => {
           winner={winner!}
           isDraw={isADraw}
           onRestart={() => {
-            if (isADraw) setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
+            if (isADraw && id !== "ai")
+              setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
             resetGame();
           }}
           onExit={resetGame}
