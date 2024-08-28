@@ -110,7 +110,7 @@ const AIGameBoard: React.FC = () => {
       {/* Display the GameEnd component when there's a winner or draw */}
       {winner && (
         <GameEnd
-          player={winner}
+          winner={winner === 'draw' ? null : winner}
           isDraw={winner === 'draw'}
           onRestart={resetGame}
           onExit={resetGame}
