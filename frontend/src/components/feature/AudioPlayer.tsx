@@ -13,7 +13,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = 0.07;
-      audioRef.current.play();
     }
   }, []);
 

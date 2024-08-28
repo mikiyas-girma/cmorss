@@ -1,4 +1,4 @@
-const getColorGradient = (colorType: 'green' | 'blue' | 'orange') => {
+const getColorGradient = (colorType: 'green' | 'blue' | 'orange' | 'red') => {
   let color = 'bg-gradient-to-r from-primary-blue to-secondary-blue';
 
   //   Define Switch Statement to get Gradient
@@ -9,6 +9,10 @@ const getColorGradient = (colorType: 'green' | 'blue' | 'orange') => {
 
     case 'orange':
       color = 'bg-gradient-to-r from-primary-orange to-secondary-orange';
+      break;
+
+    case 'red':
+      color = 'bg-gradient-to-r from-red-600 to-red-400';
       break;
 
     default:
