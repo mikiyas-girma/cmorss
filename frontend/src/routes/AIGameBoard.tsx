@@ -9,54 +9,86 @@ import { checkWinner } from '../utils/checkWinner';
 const initialBoard: Board = Array(9).fill(null);
 
 const AIGameBoard: React.FC = () => {
-  const initScore = { O: 0, X: 0, draw: 0 };
-
   const [board, setBoard] = useState<Board>(initialBoard);
-  const [currentPlayer, setCurrentPlayer] = useState<Player>('X');
-  const [winner, setWinner] = useState<string | null>(null);
+  const [winner, setWinner] = useState<'X' | 'O' | 'draw' | null>(null);
 
-  const [score, setScore] = useState(initScore);
+  // Added state to track the score for Player X, Player O, and draws
+  const [score, setScore] = useState({ X: 0, O: 0, draw: 0 });
 
-  const handleCellClick = (index: number) => {
-    if (board[index]) return;
+  const [isAITurn, setIsAITurn] = useState<boolean>(false);
 
-    const newBoard = [...board];
-    newBoard[index] = currentPlayer;
-    setBoard(newBoard);
-    setCurrentPlayer(currentPlayer === 'X' ? 'O' : 'X');
+  const playAvatarSound = () => {
+    new Audio('/sound/avatar-sound.wav')
+    .play()
+    .catch((error) =>
+      console.error('Cannot play avatar sound effect:', error)
+    );
+  }
+
+  const handlePlayerMove = (index: number) => {
+    playAvatarSound();
+
+    if (board[index] || winner || isAITurn) return;
+
+    const updatedBoard = [...board];
+    updatedBoard[index] = 'X';
+    setBoard(updatedBoard);
+
+    // Check for winner after player move and update score if necessary
+    checkForWinner(updatedBoard, 'X');
+
+    setIsAITurn(true);
   };
 
-  // Observe Board and find Winner
   useEffect(() => {
-    const findWinner = checkWinner(board);
-    if (findWinner) {
-      setWinner(findWinner);
-    }
-  }, [board, currentPlayer]);
+    if (isAITurn && !winner) {
+      const makeAIMove = () => {
+        playAvatarSound();
+        const bestMove = findBestMove(board);
+        if (bestMove !== null) {
+          const updatedBoard = [...board];
+          updatedBoard[bestMove] = 'O';
+          setBoard(updatedBoard);
 
-  const handleComputerMove = (board: Board) => {
-    const bestMove = findBestMove(board);
-    handleCellClick(bestMove);
+          // Check for winner after AI move and update score if necessary
+          checkForWinner(updatedBoard, 'O');
+        }
+        setIsAITurn(false);
+      };
+
+      const aiMoveTimeout = setTimeout(makeAIMove, 500);
+
+      return () => clearTimeout(aiMoveTimeout);
+    }
+  }, [isAITurn, board, winner]);
+
+  // Modified checkForWinner to handle 'draw' scenario and update the score
+  const checkForWinner = (currentBoard: Board, currentPlayer: Player) => {
+    const gameResult = checkWinner(currentBoard);
+
+    if (gameResult) {
+      setWinner(gameResult);
+
+      // Update score for the winning player or draw
+      setScore((prevScore) => ({
+        ...prevScore,
+        [gameResult]: prevScore[gameResult] + 1, // Increment score for the winner (or draw)
+      }));
+    } else if (!currentBoard.includes(null)) {
+      setWinner('draw');
+      setScore((prevScore) => ({
+        ...prevScore,
+        draw: prevScore.draw + 1, // Increment score for a draw
+      }));
+    }
   };
 
-  // Set up useEffect that triggers finding Computer Move
-  // Added a delay to simulate thinking
-  useEffect(() => {
-    if (currentPlayer === 'O') {
-      setTimeout(() => handleComputerMove(board), 1000);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentPlayer, board]);
-
-  // Handle Reset Game
+  // Reset the board, winner, and AI turn, but keep the score
   const resetGame = () => {
     setBoard(initialBoard);
-    setCurrentPlayer('X');
     setWinner(null);
+    setIsAITurn(false);
   };
-
-  // Determine if game state is at a draw
-  const isADraw = !board.includes(null);
 
   return (
     <div className="flex flex-col items-center justify-center space-y-5">
@@ -66,46 +98,32 @@ const AIGameBoard: React.FC = () => {
         </p>
 
         <div className="w-full grid grid-cols-3 place-items-center">
-          <Box
-            top="Score"
-            score={(score.X + '').padStart(2, '0')}
-            bottom="Player X"
-            color={'orange'}
-          />
-          <Box
-            top="Draw"
-            score={(score.draw + '').padStart(2, '0')}
-            color="blue"
-          />
-          <Box
-            top="Score"
-            score={(score.O + '').padStart(2, '0')}
-            bottom="Player O"
-            color={'green'}
-          />
+          {/* Display the updated score for Player X, Draws, and Player O */}
+          <Box top="Score" score={score.X.toString().padStart(2, '0')} bottom="Player X" color="orange" />
+          <Box top="Draw" score={score.draw.toString().padStart(2, '0')} color="blue" />
+          <Box top="Score" score={score.O.toString().padStart(2, '0')} bottom="Player O" color="green" />
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-2">
-        {board.map((_, index) => (
+        {board.map((cell, index) => (
           <button
             key={index}
-            className=" w-24 h-24 md:w-[150px] md:h-[150px] lg:w-[180px] lg:h-[180px]  rounded-xl bg-white text-black active:opacity-80"
-            onClick={() => handleCellClick(index)}
+            className="w-24 h-24 md:w-[150px] md:h-[150px] lg:w-[180px] lg:h-[180px] rounded-xl bg-white text-black active:opacity-80"
+            onClick={() => handlePlayerMove(index)}
+            disabled={!!cell || winner !== null || isAITurn}
           >
-            <Avatar player={board[index]} />
+            <Avatar player={cell} />
           </button>
         ))}
       </div>
 
-      {(isADraw || winner) && (
+      {/* Display the GameEnd component when there's a winner or draw */}
+      {winner && (
         <GameEnd
-          player={winner!}
-          isDraw={isADraw}
-          onRestart={() => {
-            if (isADraw) setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
-            resetGame();
-          }}
+          winner={winner === 'draw' ? null : winner}
+          isDraw={winner === 'draw'}
+          onRestart={resetGame}
           onExit={resetGame}
         />
       )}

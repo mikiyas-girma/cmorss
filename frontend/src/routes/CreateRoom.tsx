@@ -3,6 +3,7 @@ import generateShortUUID from '../utils/generateShortUUID';
 import Button from '../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import { toastError, toastSuccess } from '../utils/toast';
+import { useSocket } from '../hooks/useSocket';
 
 /**
  * Create Room Component
@@ -12,6 +13,7 @@ const CreateRoom: React.FC = () => {
   const [roomID, setRoomID] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const {socket} = useSocket();
 
   useEffect(() => {
     setRoomID(generateShortUUID(7));
@@ -26,10 +28,11 @@ const CreateRoom: React.FC = () => {
     }
   };
 
-  const handleNavigation = () => {
+  const createRoom = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
+      socket?.emit('createRoom', roomID);
       navigate(`/game/${roomID}`);
     }, 2000);
   };
@@ -60,7 +63,7 @@ const CreateRoom: React.FC = () => {
         color="blue"
         size="full"
         text={loading ? 'Loading. Please wait...' : 'Create Room'}
-        onClick={handleNavigation}
+        onClick={createRoom}
       />
     </div>
   );

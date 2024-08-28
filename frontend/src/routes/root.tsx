@@ -1,15 +1,15 @@
-import { Outlet } from 'react-router-dom';
-import AppLogo from '../components/common/AppLogo';
-import TeamMark from '../components/common/TeamMark';
-import { gameLoungeBg, gameSceneBg } from '../assets';
-import { useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import SplashScreen from '../components/SplashScreen';
-import AudioPlayer from '../components/feature/AudioPlayer';
+import { Outlet } from "react-router-dom";
+import AppLogo from "../components/common/AppLogo";
+import TeamMark from "../components/common/TeamMark";
+import { gameLoungeBg, gameSceneBg } from "../assets";
+import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import SplashScreen from "../components/SplashScreen";
+import AudioPlayer from "../components/feature/AudioPlayer";
 
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import BackButton from '../components/common/BackButton';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import BackButton from "../components/common/BackButton";
 
 const Root = () => {
   // Set up Loader
@@ -18,11 +18,11 @@ const Root = () => {
   const path = location.pathname;
 
   const backgroundImage =
-    path == '/dashboard' || path.startsWith('/room/')
+    path == "/dashboard" || path.startsWith("/room/")
       ? `url(${gameLoungeBg})`
-      : path.includes('/game/') || path.includes('/play/')
+      : path.includes("/game/") || path.includes("/play/")
       ? `url(${gameSceneBg})`
-      : '';
+      : "";
 
   // Hehe... don't mind me I like the loader
   useEffect(() => {
@@ -42,10 +42,10 @@ const Root = () => {
         <div className="absolute inset-0 -z-10 bg-black opacity-30" />
       )}
 
-      <SplashScreen loading={loading && path === '/'} />
+      <SplashScreen loading={loading && path === "/"} />
 
       <AppLogo className="self-start" size="small" position="left" />
-      <AudioPlayer audioSrc="/music.mp3" />
+      <AudioPlayer audioSrc="/background-music.mp3" />
       {/* Page Content */}
       <Outlet />
       <ToastContainer />

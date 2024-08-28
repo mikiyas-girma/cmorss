@@ -9,5 +9,5 @@ export enum SocketEvent {
 	MOVE_MADE = 'moveMade', // Event emited when a user move was correctly processed and broadcasted to other player
 	DELETE_ROOM = 'deleteRoom', // Event raised when a user stop a room
 	ROOM_DELETED = 'roomDeleted', // Event emited when a room is correctly deleted
-	ERROR = 'deleteRoom', // Event emited when an error occurs
+	ERROR = 'error', // Event emited when an error occurs
 }

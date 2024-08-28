@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Button from '../components/common/Button';
 import { useNavigate } from 'react-router-dom';
 import Input from '../components/common/Input';
+import { useSocket } from '../hooks/useSocket';
 
 /**
  * Join Room Room Component
@@ -10,12 +11,14 @@ import Input from '../components/common/Input';
 const JoinRoom: React.FC = () => {
   const [roomID, setRoomID] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const { socket } = useSocket();
 
   const handleNavigation = () => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
+      socket?.emit('joinRoom', roomID);
       navigate(`/game/${roomID}`);
     }, 2000);
   };
