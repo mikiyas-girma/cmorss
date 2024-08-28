@@ -46,6 +46,14 @@ function App() {
           navigate('/dashboard');
         }}
       />
+
+      <Button
+        text="Leaderboard"
+        color="blue"
+        animate
+        size="full"
+        onClick={() => navigate('/leaderboard')}
+      />
     </div>
   );
 }
