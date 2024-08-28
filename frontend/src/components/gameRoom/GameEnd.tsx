@@ -4,7 +4,7 @@ import { starImage, drawGame } from '../../assets';
 import { useNavigate } from 'react-router-dom';
 
 type GameEndType = {
-  player: string;
+  winner: string | null;
   isDraw: boolean;
   onRestart: () => void;
   onExit: () => void;
@@ -15,7 +15,7 @@ type GameEndType = {
  * @returns
  */
 const GameEnd: React.FC<GameEndType> = ({
-  player,
+  winner,
   isDraw,
   onRestart,
   onExit,
@@ -25,7 +25,7 @@ const GameEnd: React.FC<GameEndType> = ({
     <div className="">
       <div className="absolute inset-0 bg-black opacity-70" />
       <div className="absolute inset-0 backdrop-blur-md flex flex-col items-center justify-center">
-        {isDraw && !player && (
+        {isDraw && !winner && (
           <div className="mb-10 flex items-center justify-center">
             <img
               className="w-full max-w-[300px] -mb-10 animate-bounce"
@@ -35,7 +35,7 @@ const GameEnd: React.FC<GameEndType> = ({
           </div>
         )}
 
-        {player && (
+        {winner && (
           <div className="mb-10 flex items-center justify-center">
             <img
               className="w-16 pt-16 animate-ping"
@@ -56,17 +56,17 @@ const GameEnd: React.FC<GameEndType> = ({
           </div>
         )}
 
-        {player && (
+        {winner && (
           <div className="text-center">
             <p className="text-yellow-500 text-3xl font-bold">YAAAAAAAY!</p>
-            <p className="text-white text-4xl font-bold">PLAYER {player}</p>
+            <p className="text-white text-4xl font-bold">PLAYER {winner}</p>
             <p className="text-yellow-500 text-7xl font-extrabold leading-none">
               WON!
             </p>
           </div>
         )}
 
-        {isDraw && !player && (
+        {isDraw && !winner && (
           <div className="text-center">
             <p className="text-yellow-500 text-3xl font-bold">Oooops!</p>
             <p className="text-white text-4xl font-bold">IT'S A DRAW!</p>
