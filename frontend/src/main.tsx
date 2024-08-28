@@ -13,7 +13,11 @@ import { AppStateProvider } from "./contexts/AppStateContext.tsx";
 import JoinRoom from "./routes/JoinRoom.tsx";
 import CreateRoom from "./routes/CreateRoom.tsx";
 import { GameProvider } from "./contexts/GameContext.tsx";
+
+import WaitingRoom from "./routes/WaitingRoom.tsx";
+
 import Leaderboard from "./routes/Leaderbord.tsx";
+
 
 const router = createBrowserRouter([
   {
@@ -42,6 +46,7 @@ const router = createBrowserRouter([
       },
       { path: "/room/create", element: <CreateRoom /> },
       { path: "/room/join", element: <JoinRoom /> },
+      { path: "/room/wait", element: <WaitingRoom /> },
       {
         path: "/game/:id",
         element: <Room />,
