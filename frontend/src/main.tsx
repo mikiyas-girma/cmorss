@@ -13,6 +13,7 @@ import { AppStateProvider } from "./contexts/AppStateContext.tsx";
 import JoinRoom from "./routes/JoinRoom.tsx";
 import CreateRoom from "./routes/CreateRoom.tsx";
 import { GameProvider } from "./contexts/GameContext.tsx";
+import Leaderboard from "./routes/Leaderbord.tsx";
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,10 @@ const router = createBrowserRouter([
       {
         path: "/dashboard",
         element: <Dashboard />,
+      },
+      {
+        path: "/leaderboard",
+        element: <Leaderboard />,
       },
       {
         path: "/login",
