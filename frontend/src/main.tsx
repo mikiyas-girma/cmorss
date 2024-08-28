@@ -9,7 +9,6 @@ import Login from "./routes/Login.tsx";
 import Register from "./routes/Register.tsx";
 import Room from "./routes/GameRoom.tsx";
 import Dashboard from "./routes/Dashboard.tsx";
-import AIGameBoard from "./routes/AIGameBoard.tsx";
 import { AppStateProvider } from "./contexts/AppStateContext.tsx";
 import JoinRoom from "./routes/JoinRoom.tsx";
 import CreateRoom from "./routes/CreateRoom.tsx";
@@ -35,10 +34,6 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Register />,
-      },
-      {
-        path: "/play/ai",
-        element: <AIGameBoard />,
       },
       { path: "/room/create", element: <CreateRoom /> },
       { path: "/room/join", element: <JoinRoom /> },

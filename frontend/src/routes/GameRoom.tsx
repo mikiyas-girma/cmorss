@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import Avatar from '../components/gameRoom/Avatar';
-import Box from '../components/gameRoom/Box';
-import GameEnd from '../components/gameRoom/GameEnd';
-import { checkWinner } from '../utils/checkWinner';
-import { useSocket } from '../hooks/useSocket';
-import { useParams } from 'react-router-dom';
-import { useGame } from '../hooks/useGame';
-import { Board } from '../types';
-import { cellClick } from '../utils/cellClick';
+import React, { useEffect, useState } from "react";
+import Box from "../components/gameRoom/Box";
+import GameEnd from "../components/gameRoom/GameEnd";
+import { checkWinner } from "../utils/checkWinner";
+import { useParams } from "react-router-dom";
+import { useGame } from "../hooks/useGame";
+import { Board } from "../types";
+import LocalGame from "../components/gameRoom/LocalGame";
+import AIGame from "../components/gameRoom/AIGame";
+import OnlineGame from "../components/gameRoom/OnlineGame";
+import { useAppState } from "../hooks/useAppState";
+import { updateAIGameScore } from "../utils/updateAppState";
 
 const initialBoard: Board = Array(9).fill(null);
 
@@ -17,18 +19,10 @@ const GameRoom: React.FC = () => {
   const [score, setScore] = useState(initScore);
 
   const { gameState, setGameState } = useGame();
-  const { board, currentPlayer, winner, avatar } = gameState;
+  const { board, currentPlayer, winner } = gameState;
 
-  const { socket } = useSocket();
   const { id } = useParams();
-
-  const handleCellClick = (index: number) => {
-    if (board[index] || winner || (id !== "friend" && avatar !== currentPlayer))
-      return;
-    cellClick(index, setGameState);
-    if (id !== 'friend')
-      socket?.emit('makeMove', { position: index, roomId: id });
-  };
+  const { app, setAppState } = useAppState();
 
   // Observe Board and find Winner
   useEffect(() => {
@@ -36,21 +30,31 @@ const GameRoom: React.FC = () => {
     if (findWinner) {
       setGameState((prev) => ({ ...prev, winner: findWinner }));
       setScore((prev) => ({ ...prev, [findWinner]: prev[findWinner] + 1 }));
+      // Update AI Score in App State
+      if (id === "ai") {
+        updateAIGameScore(setAppState, findWinner);
+      }
     }
-  }, [board, currentPlayer, setGameState]);
+  }, [board, currentPlayer, setGameState, setAppState, id]);
+
+  useEffect(() => {
+    if (id === "ai" && app && app.aiGame) {
+      setScore({ X: app.aiGame.user, O: app.aiGame.ai, draw: app.aiGame.draw });
+    }
+  }, [app, id]);
 
   // Handle Reset Game
   const resetGame = () => {
     setGameState((prev) => ({
       ...prev,
       board: initialBoard,
-      currentPlayer: 'X',
+      currentPlayer: "X",
       winner: null,
     }));
   };
 
   // Determine if game state is at a draw
-  const isADraw = !board.includes(null) && !winner;
+  const isADraw = !board.includes(null);
 
   // Return JSX For View
   return (
@@ -63,44 +67,42 @@ const GameRoom: React.FC = () => {
         <div className="w-full grid grid-cols-3 place-items-center">
           <Box
             top="Score"
-            score={(score.X + '').padStart(2, '0')}
+            score={(score.X + "").padStart(2, "0")}
             bottom="Player X"
-            color={'orange'}
+            color={"orange"}
           />
           <Box
             top="Draw"
-            score={(score.draw + '').padStart(2, '0')}
+            score={(score.draw + "").padStart(2, "0")}
             color="blue"
           />
           <Box
             top="Score"
-            score={(score.O + '').padStart(2, '0')}
+            score={(score.O + "").padStart(2, "0")}
             bottom="Player O"
-            color={'green'}
+            color={"green"}
           />
         </div>
       </div>
-
-      <div className="grid grid-cols-3 gap-2">
-        {board.map((_, index) => (
-          <button
-            key={index}
-            className=" w-24 h-24 md:w-[150px] md:h-[150px] lg:w-[180px] lg:h-[180px]  rounded-xl bg-white text-black active:opacity-80"
-            onClick={() => handleCellClick(index)}
-          >
-            <Avatar player={board[index]} />
-          </button>
-        ))}
-      </div>
+      {id === "friend" ? (
+        <LocalGame gameState={gameState} setGameState={setGameState} />
+      ) : id === "ai" ? (
+        <AIGame gameState={gameState} setGameState={setGameState} />
+      ) : (
+        <OnlineGame
+          gameState={gameState}
+          setGameState={setGameState}
+          roomId={id}
+        />
+      )}
       <Box
         bottom="Turn"
         score={`${currentPlayer}`}
-
         color={currentPlayer === "X" ? "orange" : "green"}
-
       />
       {(isADraw || winner) && (
         <GameEnd
+          board={board}
           winner={winner!}
           isDraw={isADraw}
           onRestart={() => {

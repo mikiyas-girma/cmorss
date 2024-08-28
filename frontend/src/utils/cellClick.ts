@@ -1,20 +1,15 @@
-import { Board, Player } from "../types";
+import { GameState } from "../types";
 
-interface GameState {
-  board: Board;
-  currentPlayer: Player;
-  winner: Player | null;
-  avatar: Player;
-}
+const playAvatarSound = () => {
+  new Audio("/sound/avatar-sound.wav")
+    .play()
+    .catch((error) => console.error("Cannot play avatar sound effect:", error));
+};
 
 export const cellClick = (
   position: number,
   setGameState: React.Dispatch<React.SetStateAction<GameState>>
 ) => {
-  new Audio("/sound/avatar-sound.wav")
-    .play()
-    .catch((error) => console.error("Cannot play avatar sound effect:", error));
-
   setGameState((prev) => {
     const newBoard = [...prev.board];
     newBoard[position] = prev.currentPlayer;
@@ -26,4 +21,5 @@ export const cellClick = (
       currentPlayer: prev.currentPlayer === "X" ? "O" : "X",
     };
   });
+  playAvatarSound();
 };
