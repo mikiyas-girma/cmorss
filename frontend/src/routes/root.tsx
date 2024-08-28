@@ -45,7 +45,7 @@ const Root = () => {
       <SplashScreen loading={loading && path === "/"} />
 
       <AppLogo className="self-start" size="small" position="left" />
-      <AudioPlayer audioSrc="/music.mp3" />
+      <AudioPlayer audioSrc="/background-music.mp3" />
       {/* Page Content */}
       <Outlet />
       <ToastContainer />

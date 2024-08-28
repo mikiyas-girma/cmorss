@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AudioPlayerProps } from '../../types';
-import { useAppState } from '../../hooks/useAppState';
 
 /**
  *
@@ -8,10 +7,8 @@ import { useAppState } from '../../hooks/useAppState';
  * @returns
  */
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
-  const { app, setAppState } = useAppState();
 
   useEffect(() => {
     if (audioRef.current) {
@@ -28,14 +25,24 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
         audioRef.current.play();
       }
       setIsPlaying(!isPlaying);
-      setAppState((prev) => ({ ...prev, allowAudio: !prev.allowAudio }));
     }
   };
 
   //   Return JSX
   return (
     <div className="absolute top-5 right-3 w-[50px] sm:w-[80px]">
-      <audio ref={audioRef} src={audioSrc} loop autoPlay={app.allowAudio}>
+      <audio
+        loop
+        ref={audioRef}
+        src={audioSrc}
+        autoPlay={isPlaying}
+        onPlay={() => {
+          setIsPlaying(true);
+        }}
+        onPause={() => {
+          setIsPlaying(false);
+        }}
+      >
         Your browser does not support the audio element.
       </audio>
 
@@ -43,12 +50,12 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
         <img
           src="/images/speaker.png"
           className={`${
-            app.allowAudio ? 'animate-pulse' : 'saturate-0'
+            isPlaying ? 'animate-pulse' : 'saturate-0'
           } cursor-pointer`}
         />
       </button>
 
-      {!app.allowAudio && (
+      {!isPlaying && (
         <button className="w-[16px] h-[16px] sm:w-[25px] sm:h-[25px] bg-red-600 absolute text-white top-8 sm:top-14 rounded-full right-6 text-xs sm:text-base">
           X
         </button>

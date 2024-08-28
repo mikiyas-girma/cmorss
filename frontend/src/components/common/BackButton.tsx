@@ -17,7 +17,11 @@ const BackButton = () => {
     <button
       onClick={() => {
         new Audio('/sound/back-button-sound.wav').play();
-        navigate(-1);
+        if (path === '/dashboard') {
+          navigate('/');
+        } else {
+          navigate(-1);
+        }
       }}
       className="px-3 py-1 bg-primary-gray-green text-white absolute right-20 sm:right-28 top-8 text-xs sm:text-lg rounded-lg"
     >
