@@ -23,7 +23,8 @@ const GameRoom: React.FC = () => {
   const { id } = useParams();
 
   const handleCellClick = (index: number) => {
-    if (board[index] || winner || avatar !== currentPlayer) return;
+    if (board[index] || winner || (id !== "friend" && avatar !== currentPlayer))
+      return;
     cellClick(index, setGameState);
     if (id !== 'friend')
       socket?.emit('makeMove', { position: index, roomId: id });
@@ -94,7 +95,9 @@ const GameRoom: React.FC = () => {
       <Box
         bottom="Turn"
         score={`${currentPlayer}`}
-        color={currentPlayer === 'X' ? 'orange' : 'green'}
+
+        color={currentPlayer === "X" ? "orange" : "green"}
+
       />
       {(isADraw || winner) && (
         <GameEnd
