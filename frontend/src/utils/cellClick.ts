@@ -11,6 +11,9 @@ export const cellClick = (
   position: number,
   setGameState: React.Dispatch<React.SetStateAction<GameState>>
 ) => {
+  new Audio("/sound/avatar-sound.wav")
+    .play()
+    .catch((error) => console.error("Cannot play avatar sound effect:", error));
 
   setGameState((prev) => {
     const newBoard = [...prev.board];
