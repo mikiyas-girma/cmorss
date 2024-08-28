@@ -17,7 +17,17 @@ const AIGameBoard: React.FC = () => {
 
   const [isAITurn, setIsAITurn] = useState<boolean>(false);
 
+  const playAvatarSound = () => {
+    new Audio('/sound/avatar-sound.wav')
+    .play()
+    .catch((error) =>
+      console.error('Cannot play avatar sound effect:', error)
+    );
+  }
+
   const handlePlayerMove = (index: number) => {
+    playAvatarSound();
+
     if (board[index] || winner || isAITurn) return;
 
     const updatedBoard = [...board];
@@ -33,6 +43,7 @@ const AIGameBoard: React.FC = () => {
   useEffect(() => {
     if (isAITurn && !winner) {
       const makeAIMove = () => {
+        playAvatarSound();
         const bestMove = findBestMove(board);
         if (bestMove !== null) {
           const updatedBoard = [...board];
