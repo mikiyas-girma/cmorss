@@ -2,12 +2,15 @@ import React from 'react';
 import Button from '../common/Button';
 import { starImage, drawGame } from '../../assets';
 import { useNavigate } from 'react-router-dom';
+import { Board } from '../../types';
+import GameEndBoard from './GameEndBoard';
 
 type GameEndType = {
   winner: string | null;
   isDraw: boolean;
   onRestart: () => void;
   onExit: () => void;
+  board: Board;
 };
 /**
  * Game End Screen
@@ -17,6 +20,7 @@ type GameEndType = {
 const GameEnd: React.FC<GameEndType> = ({
   winner,
   isDraw,
+  board,
   onRestart,
   onExit,
 }) => {
@@ -43,7 +47,7 @@ const GameEnd: React.FC<GameEndType> = ({
               alt="star"
             />
             <img
-              className="-mx-4 animate-ping delay-75"
+              className="-mx-4 animate-ping delay-300 w-[50%] sm:w-auto"
               src={starImage}
               alt="star"
             />
@@ -58,11 +62,13 @@ const GameEnd: React.FC<GameEndType> = ({
 
         {winner && (
           <div className="text-center">
-            <p className="text-yellow-500 text-3xl font-bold">YAAAAAAAY!</p>
-            <p className="text-white text-4xl font-bold">PLAYER {winner}</p>
-            <p className="text-yellow-500 text-7xl font-extrabold leading-none">
-              WON!
+            <p className="text-yellow-500 text-xl sm:text-3xl font-bold">
+              YAAAAAAAY!
             </p>
+            <p className="text-white text-4xl font-bold">PLAYER {winner}</p>
+            <span className="text-yellow-500 mb-1 text-4xl  sm:text-6xl font-extrabold leading-none">
+              WON!
+            </span>
           </div>
         )}
 
@@ -73,6 +79,10 @@ const GameEnd: React.FC<GameEndType> = ({
             <p className="text-white text-xl font-bold">Good Game!</p>
           </div>
         )}
+
+        {/* Show state at which game was worm */}
+        <GameEndBoard board={board} />
+
         <div className="w-full flex flex-col space-y-1">
           <Button
             text="Play Again"

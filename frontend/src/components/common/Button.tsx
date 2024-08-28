@@ -3,13 +3,14 @@
 import getColorGradient from '../../utils/getColorGradient';
 
 type ButtonType = {
-  color: 'green' | 'blue' | 'orange';
+  color: 'green' | 'blue' | 'orange' | 'red';
   text: string;
   animate?: boolean;
   size: 'full' | 'content-fit';
   disabled?: boolean;
   loading?: boolean;
   onClick: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  className?: string;
 };
 
 /**
@@ -28,21 +29,24 @@ const Button: React.FC<ButtonType> = ({
   onClick,
   disabled = false,
   loading,
+  className,
 }) => {
   // Pick conditional classes
   const colorChoice = getColorGradient(color);
   const btnSize = size === 'full' ? 'w-[80%] max-w-[300px]' : 'w-fit';
 
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     const sound = new Audio('/sound/button-sound.wav');
     sound.play();
     onClick(event);
-  }
+  };
 
   // Return JSX Component
   return (
     <div
-      className={`overflow-hidden p-3 px-6 rounded-lg text-white font-poppins font-semibold my-3 mx-auto text-center min-w-[280px] ${btnSize} ${
+      className={`${className} overflow-hidden p-3 px-6 rounded-lg text-white font-poppins font-semibold my-3 mx-auto text-center min-w-[280px] ${btnSize} ${
         animate && 'animate-animateBtn'
       } ${!loading && colorChoice} ${
         loading && 'animate-pulse bg-slate-500 cursor-not-allowed'

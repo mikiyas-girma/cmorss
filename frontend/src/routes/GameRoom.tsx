@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Avatar from "../components/gameRoom/Avatar";
 import Box from "../components/gameRoom/Box";
 import GameEnd from "../components/gameRoom/GameEnd";
 import { checkWinner } from "../utils/checkWinner";
-import { useSocket } from "../hooks/useSocket";
 import { useParams } from "react-router-dom";
 import { useGame } from "../hooks/useGame";
 import { Board } from "../types";
-import { cellClick } from "../utils/cellClick";
+import LocalGame from "../components/gameRoom/LocalGame";
+import AIGame from "../components/gameRoom/AIGame";
+import OnlineGame from "../components/gameRoom/OnlineGame";
+import { useAppState } from "../hooks/useAppState";
+import { updateAIGameScore } from "../utils/updateAppState";
 
 const initialBoard: Board = Array(9).fill(null);
 
@@ -17,18 +19,10 @@ const GameRoom: React.FC = () => {
   const [score, setScore] = useState(initScore);
 
   const { gameState, setGameState } = useGame();
-  const { board, currentPlayer, winner, avatar } = gameState;
+  const { board, currentPlayer, winner } = gameState;
 
-  const { socket } = useSocket();
   const { id } = useParams();
-
-  const handleCellClick = (index: number) => {
-    if (board[index] || winner || (id !== "friend" && avatar !== currentPlayer))
-      return;
-    cellClick(index, setGameState);
-    if (id !== "friend")
-      socket?.emit("makeMove", { position: index, roomId: id });
-  };
+  const { app, setAppState } = useAppState();
 
   // Observe Board and find Winner
   useEffect(() => {
@@ -37,7 +31,17 @@ const GameRoom: React.FC = () => {
       setGameState((prev) => ({ ...prev, winner: findWinner }));
       setScore((prev) => ({ ...prev, [findWinner]: prev[findWinner] + 1 }));
     }
-  }, [board, currentPlayer]);
+    // Update AI Score in App State
+    if (id === "ai" && (findWinner || !board.includes(null))) {
+      updateAIGameScore(setAppState, findWinner);
+    }
+  }, [board, currentPlayer, setGameState, setAppState, id]);
+
+  useEffect(() => {
+    if (id === "ai" && app && app.aiGame) {
+      setScore({ X: app.aiGame.user, O: app.aiGame.ai, draw: app.aiGame.draw });
+    }
+  }, [app, id]);
 
   // Handle Reset Game
   const resetGame = () => {
@@ -80,18 +84,17 @@ const GameRoom: React.FC = () => {
           />
         </div>
       </div>
-
-      <div className="grid grid-cols-3 gap-2">
-        {board.map((_, index) => (
-          <button
-            key={index}
-            className=" w-24 h-24 md:w-[150px] md:h-[150px] lg:w-[180px] lg:h-[180px]  rounded-xl bg-white text-black active:opacity-80"
-            onClick={() => handleCellClick(index)}
-          >
-            <Avatar player={board[index]} />
-          </button>
-        ))}
-      </div>
+      {id === "friend" ? (
+        <LocalGame gameState={gameState} setGameState={setGameState} />
+      ) : id === "ai" ? (
+        <AIGame gameState={gameState} setGameState={setGameState} />
+      ) : (
+        <OnlineGame
+          gameState={gameState}
+          setGameState={setGameState}
+          roomId={id}
+        />
+      )}
       <Box
         bottom="Turn"
         score={`${currentPlayer}`}
@@ -99,10 +102,12 @@ const GameRoom: React.FC = () => {
       />
       {(isADraw || winner) && (
         <GameEnd
+          board={board}
           winner={winner!}
           isDraw={isADraw}
           onRestart={() => {
-            if (isADraw) setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
+            if (isADraw && id !== "ai")
+              setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
             resetGame();
           }}
           onExit={resetGame}

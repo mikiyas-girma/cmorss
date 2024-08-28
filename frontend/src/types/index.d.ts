@@ -20,9 +20,22 @@ export type User = {
   wins: number;
   losses: number;
   draws: number;
+  gamesPlayed: number;
 };
 
 export type AppState = {
   allowAudio: boolean;
   user: User | null;
+  aiGame: {
+    user: number;
+    ai: number;
+    draw: number;
+  };
 };
+
+export type GameState = {
+  board: Board;
+  currentPlayer: Player;
+  winner: Player | null;
+  avatar: Player;
+}

@@ -1,10 +1,14 @@
-import http from "http";
-import { Server, Socket } from "socket.io";
-import { SocketEvent } from "./utils/socketEvents.js";
+import http from 'http';
+import { Server, Socket } from 'socket.io';
+import { SocketEvent } from './utils/socketEvents.js';
 
 let cachedIo: Server | null = null;
 
-async function joinSocketToRoom(socket: Socket, roomId: string, avatar: string) {
+async function joinSocketToRoom(
+  socket: Socket,
+  roomId: string,
+  avatar: string
+) {
   try {
     await socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
@@ -28,7 +32,7 @@ function canJoinRoom(socket: Socket, roomId: string) {
       return true;
     } else {
       console.error(`Room ${roomId} is full.`);
-      socket.emit(SocketEvent.ERROR, { message: "Room is full." });
+      socket.emit(SocketEvent.ERROR, { message: 'Room is full.' });
       return false;
     }
   }
@@ -49,12 +53,12 @@ function initSocketIo(
   } else {
     cachedIo = new Server(httpServerInstance, {
       cors: {
-        origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
       },
     });
 
     cachedIo.on(SocketEvent.CONNECTION, (socket) => {
-      console.log("A user connected");
+      console.log('A user connected');
       //TODO: Manage user session
 
       socket.on(SocketEvent.CREATE_ROOM, async (roomId: string) => {
@@ -62,7 +66,7 @@ function initSocketIo(
 
         if (roomExists) {
           console.error(`Room ${roomId} already exist.`);
-          socket.emit(SocketEvent.ERROR, { message: "Room already exist." });
+          socket.emit(SocketEvent.ERROR, { message: 'Room already exist.' });
         } else {
           joinSocketToRoom(socket, roomId, 'X');
         }
@@ -73,7 +77,7 @@ function initSocketIo(
 
         if (!roomExists) {
           console.error(`Room ${roomId} does not exist.`);
-          socket.emit(SocketEvent.ERROR, { message: "Room does not exist." });
+          socket.emit(SocketEvent.ERROR, { message: 'Room does not exist.' });
         } else {
           canJoinRoom(socket, roomId) && joinSocketToRoom(socket, roomId, 'O');
         }
@@ -93,7 +97,7 @@ function initSocketIo(
             if (!emited) {
               console.error(`Failled to emit event for user ${socket.id}`);
               socket.emit(SocketEvent.ERROR, {
-                message: "Move made not shared.",
+                message: 'Move made not shared.',
               });
             }
           }
@@ -101,7 +105,7 @@ function initSocketIo(
       );
 
       socket.on(SocketEvent.DISCONNECT, () => {
-        console.log("User disconnected");
+        console.log('User disconnected');
       });
 
       // socket.on(SocketEvent.DELETE_ROOM, (roomId: string) => {

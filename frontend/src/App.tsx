@@ -2,9 +2,21 @@ import './App.css';
 import ThreeDLogoComp from './components/common/ThreeDLogo';
 import Button from './components/common/Button';
 import { useNavigate } from 'react-router-dom';
+import { useAppState } from './hooks/useAppState';
+import { useEffect } from 'react';
 
 function App() {
   const navigate = useNavigate();
+  const { app, setAppState } = useAppState();
+
+  // Redirect user to dashboard if already logged in
+  useEffect(() => {
+    if (app.user) {
+      navigate('/dashboard');
+    }
+  }, [app.user, navigate]);
+
+  // Return JSX
   return (
     <div className="overflow-x-hidden w-full">
       <ThreeDLogoComp size="large" animate={false} />
@@ -29,7 +41,18 @@ function App() {
         color="orange"
         animate
         size="full"
-        onClick={() => navigate('/dashboard')}
+        onClick={() => {
+          setAppState((prev) => ({ ...prev, user: null, guest: true }));
+          navigate('/dashboard');
+        }}
+      />
+
+      <Button
+        text="Leaderboard"
+        color="blue"
+        animate
+        size="full"
+        onClick={() => navigate('/leaderboard')}
       />
     </div>
   );

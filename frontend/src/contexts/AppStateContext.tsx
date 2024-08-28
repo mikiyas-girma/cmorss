@@ -21,8 +21,13 @@ export const AppStateProvider: React.FC<AppStateProviderProps> = ({
 }) => {
   const init = loadStateFromLocalStorage() || {
     user: null,
+    aiGame: { user: 0, ai: 0, draw: 0 },
     allowAudio: false,
   };
+
+  if (!init.aiGame) {
+    init.aiGame = { user: 0, ai: 0, draw: 0 };
+  }
 
   const [appState, setAppState] = useState<AppState>(init);
 

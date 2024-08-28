@@ -9,11 +9,15 @@ import Login from "./routes/Login.tsx";
 import Register from "./routes/Register.tsx";
 import Room from "./routes/GameRoom.tsx";
 import Dashboard from "./routes/Dashboard.tsx";
-import AIGameBoard from "./routes/AIGameBoard.tsx";
 import { AppStateProvider } from "./contexts/AppStateContext.tsx";
 import JoinRoom from "./routes/JoinRoom.tsx";
 import CreateRoom from "./routes/CreateRoom.tsx";
 import { GameProvider } from "./contexts/GameContext.tsx";
+
+import WaitingRoom from "./routes/WaitingRoom.tsx";
+
+import Leaderboard from "./routes/Leaderbord.tsx";
+
 
 const router = createBrowserRouter([
   {
@@ -29,6 +33,10 @@ const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
+        path: "/leaderboard",
+        element: <Leaderboard />,
+      },
+      {
         path: "/login",
         element: <Login />,
       },
@@ -36,12 +44,9 @@ const router = createBrowserRouter([
         path: "/signup",
         element: <Register />,
       },
-      {
-        path: "/play/ai",
-        element: <AIGameBoard />,
-      },
       { path: "/room/create", element: <CreateRoom /> },
       { path: "/room/join", element: <JoinRoom /> },
+      { path: "/room/wait", element: <WaitingRoom /> },
       {
         path: "/game/:id",
         element: <Room />,

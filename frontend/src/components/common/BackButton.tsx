@@ -9,8 +9,9 @@ const BackButton = () => {
   const path = useLocation().pathname;
 
   const isIndex = path === '/';
+  const isInGame = path === '/play/ai';
 
-  if (isIndex) return null;
+  if (isIndex || isInGame) return null;
 
   //   Return JSX To Go Back
   return (
