@@ -87,7 +87,7 @@ const OnlineGame = ({ gameState, setGameState, roomId }: OnlineGameProps) => {
                 {playerCount < 2 ? (
                   <p>Waiting for players...</p>
                 ) : (
-                  <p>Redirecting...</p>
+                  <p>Starting...</p>
                 )}
                 <p>{playerCount}/2</p>
               </div>
