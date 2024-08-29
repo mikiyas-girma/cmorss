@@ -2,6 +2,12 @@ import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { SocketEvent } from './utils/socketEvents.js';
 
+type Message = {
+  name: string;
+  text: string;
+  time: string;
+};
+
 let cachedIo: Server | null = null;
 
 async function joinSocketToRoom(
@@ -98,6 +104,25 @@ function initSocketIo(
               console.error(`Failled to emit event for user ${socket.id}`);
               socket.emit(SocketEvent.ERROR, {
                 message: 'Move made not shared.',
+              });
+            }
+          }
+        }
+      );
+
+      socket.on(
+        SocketEvent.MESSAGE,
+        (data: { msg: Message; roomId: string }) => {
+          console.log('MESSAGE');
+          if (socket.rooms.has(data.roomId)) {
+            const emited = cachedIo
+              ?.to(data.roomId)
+              .emit('newMessage', data.msg, socket.id);
+
+            if (!emited) {
+              console.error(`Failled to emit event for user ${socket.id}`);
+              socket.emit('messageError', {
+                message: 'Unable to send message.',
               });
             }
           }

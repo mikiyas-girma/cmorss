@@ -46,7 +46,7 @@ const Button: React.FC<ButtonType> = ({
   // Return JSX Component
   return (
     <div
-      className={`${className} overflow-hidden p-3 px-6 rounded-lg text-white font-poppins font-semibold my-3 mx-auto text-center min-w-[280px] ${btnSize} ${
+      className={`${className} overflow-hidden p-3 px-6 rounded-lg text-white font-poppins font-semibold my-3 mx-auto text-center hover:opacity-85 transition-opacity duration-150 ease-out ${btnSize} ${
         animate && 'animate-animateBtn'
       } ${!loading && colorChoice} ${
         loading && 'animate-pulse bg-slate-500 cursor-not-allowed'

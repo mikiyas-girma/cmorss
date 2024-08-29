@@ -7,6 +7,7 @@ export enum SocketEvent {
 	DISCONNECTED = 'disconnect', // Event emited when a user disconnect successfully
 	MAKE_MOVE = 'makeMove', // Event raised when a user make a move(set his avatar somewhere in the game field) to a room
 	MOVE_MADE = 'moveMade', // Event emited when a user move was correctly processed and broadcasted to other player
+	MESSAGE='message',
 	DELETE_ROOM = 'deleteRoom', // Event raised when a user stop a room
 	ROOM_DELETED = 'roomDeleted', // Event emited when a room is correctly deleted
 	ERROR = 'error', // Event emited when an error occurs
