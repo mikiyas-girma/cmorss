@@ -1,12 +1,15 @@
-import React from "react";
-import Button from "./Button";
+import React from 'react';
+import Button from './Button';
 
-const Modal: React.FC<{ children: React.ReactNode; setOpen: React.Dispatch<React.SetStateAction<boolean>> }> = ({
-  children,
-  setOpen,
-}) => {
+const Modal: React.FC<{
+  children: React.ReactNode;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({ children, setOpen }) => {
   return (
-    <div className="">
+    <div
+      className="absolute inset-0 bg-primary-green bg-opacity-30 backdrop-blur-md w-full h-full z-10"
+      onClick={() => setOpen(false)}
+    >
       <div className="absolute inset-0 bg-black opacity-30" />
       <div className="absolute inset-0 backdrop-blur-s flex flex-col items-center justify-center">
         <div className="relative">
@@ -17,7 +20,6 @@ const Modal: React.FC<{ children: React.ReactNode; setOpen: React.Dispatch<React
             onClick={() => setOpen(false)}
             text="×"
           />
-            
 
           {children}
         </div>
