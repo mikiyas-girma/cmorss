@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import Box from '../components/gameRoom/Box';
-import GameEnd from '../components/gameRoom/GameEnd';
-import { checkWinner } from '../utils/checkWinner';
-import { useLocation, useParams } from 'react-router-dom';
-import { useGame } from '../hooks/useGame';
-import { Board } from '../types';
-import LocalGame from '../components/gameRoom/LocalGame';
-import AIGame from '../components/gameRoom/AIGame';
-import OnlineGame from '../components/gameRoom/OnlineGame';
-import { useAppState } from '../hooks/useAppState';
-import { updateAIGameScore } from '../utils/updateAppState';
-import ChatBox from '../components/gameRoom/ChatBox';
+import React, { useEffect, useState } from "react";
+import Box from "../components/gameRoom/Box";
+import GameEnd from "../components/gameRoom/GameEnd";
+import { checkWinner } from "../utils/checkWinner";
+import { useLocation, useParams } from "react-router-dom";
+import { useGame } from "../hooks/useGame";
+import { Board } from "../types";
+import LocalGame from "../components/gameRoom/LocalGame";
+import AIGame from "../components/gameRoom/AIGame";
+import OnlineGame from "../components/gameRoom/OnlineGame";
+import { useAppState } from "../hooks/useAppState";
+import { updateAIGameScore } from "../utils/updateAppState";
+import ChatBox from "../components/gameRoom/ChatBox";
 
 const initialBoard: Board = Array(9).fill(null);
 
@@ -34,13 +34,13 @@ const GameRoom: React.FC = () => {
       setScore((prev) => ({ ...prev, [findWinner]: prev[findWinner] + 1 }));
     }
     // Update AI Score in App State
-    if (id === 'ai' && (findWinner || !board.includes(null))) {
+    if (id === "ai" && (findWinner || !board.includes(null))) {
       updateAIGameScore(setAppState, findWinner);
     }
   }, [board, currentPlayer, setGameState, setAppState, id]);
 
   useEffect(() => {
-    if (id === 'ai' && app && app.aiGame) {
+    if (id === "ai" && app && app.aiGame) {
       setScore({ X: app.aiGame.user, O: app.aiGame.ai, draw: app.aiGame.draw });
     }
   }, [app, id]);
@@ -50,14 +50,19 @@ const GameRoom: React.FC = () => {
     setGameState((prev) => ({
       ...prev,
       board: initialBoard,
-      currentPlayer: 'X',
+      currentPlayer: "X",
       winner: null,
     }));
   };
 
+  //reset game state on unmount
+  useEffect(() => {
+    return () => resetGame();
+  }, []);
+
   // Determine if game state is at a draw
   const isADraw = !board.includes(null);
-  const isAbleToChat = pathName.includes('/game/');
+  const isAbleToChat = pathName.includes("/game/");
 
   // Return JSX For View
   return (
@@ -70,32 +75,32 @@ const GameRoom: React.FC = () => {
         <div className="w-full px-4 grid grid-cols-4 gap-2 place-items-center">
           <Box
             top="Score"
-            score={(score.X + '').padStart(2, '0')}
+            score={(score.X + "").padStart(2, "0")}
             bottom="Player X"
-            color={'orange'}
+            color={"orange"}
           />
           <Box
             top="Draw"
-            score={(score.draw + '').padStart(2, '0')}
+            score={(score.draw + "").padStart(2, "0")}
             color="blue"
           />
           <Box
             top="Score"
-            score={(score.O + '').padStart(2, '0')}
+            score={(score.O + "").padStart(2, "0")}
             bottom="Player O"
-            color={'green'}
+            color={"green"}
           />
 
           <Box
             bottom="Turn"
             score={`${currentPlayer}`}
-            color={currentPlayer === 'X' ? 'orange' : 'green'}
+            color={currentPlayer === "X" ? "orange" : "green"}
           />
         </div>
       </div>
-      {id === 'friend' ? (
+      {id === "friend" ? (
         <LocalGame gameState={gameState} setGameState={setGameState} />
-      ) : id === 'ai' ? (
+      ) : id === "ai" ? (
         <AIGame gameState={gameState} setGameState={setGameState} />
       ) : (
         <OnlineGame
@@ -111,7 +116,7 @@ const GameRoom: React.FC = () => {
           winner={winner!}
           isDraw={isADraw}
           onRestart={() => {
-            if (isADraw && id !== 'ai')
+            if (isADraw && id !== "ai")
               setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
             resetGame();
           }}
