@@ -1,5 +1,5 @@
-import { Player } from "../../types";
-import Avatar from "./Avatar";
+import { Player } from '../../types';
+import Avatar from './Avatar';
 
 interface GameBoardProps {
   board: Player[];
@@ -12,7 +12,7 @@ const GameBoard = ({ board, handleCellClick }: GameBoardProps) => {
       {board.map((_, index) => (
         <button
           key={index}
-          className=" w-24 h-24 md:w-[150px] md:h-[150px] lg:w-[180px] lg:h-[180px] rounded-xl bg-white text-black active:opacity-80"
+          className=" w-24 h-24 sm:w-[120px] sm:h-[120px] md:w-[150px] md:h-[150px] rounded-xl bg-white text-black active:opacity-80"
           onClick={() => handleCellClick(index)}
         >
           <Avatar player={board[index]} />

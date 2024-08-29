@@ -38,4 +38,10 @@ export type GameState = {
   currentPlayer: Player;
   winner: Player | null;
   avatar: Player;
-}
+};
+
+export type Message = {
+  name: string;
+  text: string;
+  time: string;
+};

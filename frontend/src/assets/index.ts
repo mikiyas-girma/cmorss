@@ -6,6 +6,7 @@ import gameSceneBg from '/backgrounds/game-scene.jpeg';
 import starImage from '/images/gold_star.png';
 import drawGame from '/images/draw-game-mode.png';
 import speaker from '/images/speaker.png';
+import chatIcon from '/images/chat.png';
 
 export {
   Logo,
@@ -16,4 +17,5 @@ export {
   starImage,
   drawGame,
   speaker,
+  chatIcon,
 };
