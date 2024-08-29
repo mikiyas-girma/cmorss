@@ -11,7 +11,7 @@ const Modal: React.FC<{ children: React.ReactNode; setOpen: React.Dispatch<React
       <div className="absolute inset-0 backdrop-blur-s flex flex-col items-center justify-center">
         <div className="relative">
           <Button
-            className="bg-gray-200 px-1.5 py-0.5 rounded-md absolute top-1 right-4 z-10 text-white font-bold text-2xl leading-none min-w-0"
+            className="px-1.5 py-0.5 absolute top-1 right-4 z-10 text-white font-bold text-2xl leading-none !min-w-0"
             color="red"
             size="content-fit"
             onClick={() => setOpen(false)}
