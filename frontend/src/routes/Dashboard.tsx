@@ -1,9 +1,9 @@
-import ThreeDLogoComp from "../components/common/ThreeDLogo";
-import Button from "../components/common/Button";
-import { useNavigate } from "react-router-dom";
-import { useAppState } from "../hooks/useAppState";
-import { useState } from "react";
-import Modal from "../components/common/Modal";
+import ThreeDLogoComp from '../components/common/ThreeDLogo';
+import Button from '../components/common/Button';
+import { useNavigate } from 'react-router-dom';
+import { useAppState } from '../hooks/useAppState';
+import { useState } from 'react';
+import Modal from '../components/common/Modal';
 
 const Dashboard = () => {
   const [playOnline, setPlayOnline] = useState(false);
@@ -20,7 +20,7 @@ const Dashboard = () => {
         color="green"
         animate
         size="full"
-        onClick={() => navigate("/game/friend")}
+        onClick={() => navigate('/game/friend')}
       />
 
       <Button
@@ -28,7 +28,7 @@ const Dashboard = () => {
         color="orange"
         animate
         size="full"
-        onClick={() => navigate("/game/ai")}
+        onClick={() => navigate('/game/ai')}
       />
 
       {app.user && (
@@ -53,8 +53,8 @@ const Dashboard = () => {
       )}
       {playOnline && (
         <Modal setOpen={setPlayOnline}>
-          <div className=" bg-primary-gray-gree border-4 border-primary-gray-green backdrop-blur-2xl text-white p-4 rounded-lg px-20">
-            <h2 className="text-2xl font-bold text-center">Online Game</h2>
+          <div className=" bg-primary-gray-gree border-4 border-primary-gray-green backdrop-blur-2xl text-white p-4 rounded-lg px-8 sm:px-20">
+            <h2 className="text-2xl font-bold text-center mt-8">Online Game</h2>
             <p className="text-center text-sm text-gray-300">
               Choose an option to start
             </p>
@@ -63,19 +63,22 @@ const Dashboard = () => {
                 text="Play with Random"
                 color="blue"
                 size="full"
-                onClick={() => navigate("/room/wait")}
+                onClick={() => navigate('/room/wait')}
+                className="min-w-[280px]"
               />
               <Button
                 text="Host a Game"
                 color="orange"
                 size="full"
-                onClick={() => navigate("/room/create")}
+                onClick={() => navigate('/room/create')}
+                className="min-w-[280px]"
               />
               <Button
                 text="Join a Game"
                 color="green"
                 size="full"
-                onClick={() => navigate("/room/join")}
+                onClick={() => navigate('/room/join')}
+                className="min-w-[280px]"
               />
             </div>
             <div className="mb-10"></div>
