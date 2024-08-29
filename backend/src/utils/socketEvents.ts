@@ -3,6 +3,7 @@ export enum SocketEvent {
 	CREATE_ROOM = 'createRoom', // Event raised when a user create a room
 	JOIN_ROOM = 'joinRoom', // Event raised when a user ask for join a room
 	ROOM_JOINED = 'roomJoined', // Event emited when a user successfully joins a game room
+	ROOM_FULL = 'roomFull', // Event emited when a room is full
 	DISCONNECT = 'disconnect', // Event raised when a user disconnect to a room
 	DISCONNECTED = 'disconnect', // Event emited when a user disconnect successfully
 	MAKE_MOVE = 'makeMove', // Event raised when a user make a move(set his avatar somewhere in the game field) to a room
