@@ -113,17 +113,17 @@ function initSocketIo(
       );
 
       socket.on(
-        SocketEvent.MESSAGE,
-        (data: { msg: Message; roomId: string }) => {
+        SocketEvent.SEND_MESSAGE,
+        (data: { message: Message; roomId: string }) => {
           console.log("MESSAGE");
-          if (socket.rooms.has(data.roomId)) {
+          if (!!getRoom(data.roomId)) {
             const emited = cachedIo
               ?.to(data.roomId)
-              .emit("newMessage", data.msg, socket.id);
+              .emit(SocketEvent.MESSAGE_SENT, data.message, socket.id);
 
             if (!emited) {
               console.error(`Failled to emit event for user ${socket.id}`);
-              socket.emit("messageError", {
+              socket.emit(SocketEvent.ERROR, {
                 message: "Unable to send message.",
               });
             }
@@ -131,9 +131,9 @@ function initSocketIo(
         }
       );
 
-      socket.on('disconnect', () => {
-        console.log(socket.id, 'has disconnected');
-        cachedIo?.emit('disconnected', socket.id)
+      socket.on("disconnect", () => {
+        console.log(socket.id, "has disconnected");
+        cachedIo?.emit("disconnected", socket.id);
       });
 
       socket.on(SocketEvent.DELETE_ROOM, (roomId: string) => {

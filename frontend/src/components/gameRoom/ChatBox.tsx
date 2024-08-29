@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { chatIcon } from '../../assets';
-import Button from '../common/Button';
-import { Message } from '../../types';
-import Messages from './Messages';
-import { useAppState } from '../../hooks/useAppState';
-import { useSocket } from '../../hooks/useSocket';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { chatIcon } from "../../assets";
+import Button from "../common/Button";
+import { Message } from "../../types";
+import Messages from "./Messages";
+import { useAppState } from "../../hooks/useAppState";
+import { useSocket } from "../../hooks/useSocket";
+import { useParams } from "react-router-dom";
 
 /**
  * ChatBox
@@ -14,7 +14,7 @@ import { useParams } from 'react-router-dom';
 const ChatBox = () => {
   const { app } = useAppState();
   const [showChatBox, setShowChatBox] = useState(false);
-  const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
   const { socket } = useSocket();
@@ -24,21 +24,21 @@ const ChatBox = () => {
   const handleSendMessage = async () => {
     if (text.length < 1) return;
     const msg: Message = {
-      name: app.user?.pseudo || 'Player',
+      name: app.user?.pseudo || "Player",
       text,
       time: new Date().toISOString(),
     };
 
-    socket?.emit('message', { message: msg, roomId: id });
+    socket?.emit("sendMessage", { message: msg, roomId: id });
 
     setMessages((prev) => {
       return [...prev, msg];
     });
-    setText('');
+    setText("");
   };
 
   const handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSendMessage();
     }
   };
@@ -46,20 +46,19 @@ const ChatBox = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const onNewMessage = (message: Message) => {
+    socket.on("messageSent", (message: Message, user: string) => {
+      if (user === socket?.id) return;
       setMessages((prev) => [...prev, message]);
-    };
+      setShowChatBox(true);
+    });
 
-    const onMessageError = (error: { message: string }) => {
-      console.error('SENDING MESSAGE ERROR: ', error.message);
-    };
-
-    socket.on('newMessage', onNewMessage);
-    socket.on('messageError', onMessageError);
+    socket.on("error", (error: { message: string }) => {
+      console.error("SENDING MESSAGE ERROR: ", error.message);
+    });
 
     return () => {
-      socket.off('newMessage', onNewMessage);
-      socket.off('messageError', onMessageError);
+      socket.off("messageSent");
+      socket.off("error");
     };
   }, [socket]);
 
@@ -71,8 +70,8 @@ const ChatBox = () => {
       <div
         className={`bg-primary-green backdrop-blur-md bg-opacity-60 px-4 pt-2 rounded-md relative  transition-all duration-500 ease-in-out ${
           showChatBox
-            ? 'opacity-100 w-[92%] self-end sm:w-[400px] translate-x-0'
-            : 'opacity-0  translate-x-[100%]'
+            ? "opacity-100 w-[92%] self-end sm:w-[400px] translate-x-0"
+            : "opacity-0  translate-x-[100%]"
         }`}
       >
         <p

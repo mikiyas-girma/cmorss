@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { Message } from '../../types';
 import formatDate from '../../utils/timeFormatter';
 /**
@@ -9,11 +9,13 @@ import formatDate from '../../utils/timeFormatter';
 const Messages: React.FC<{ messages: Message[] }> = ({ messages }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    (() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    })();
-  }, [messages]);
+  // I think this useEffect in making the window horizontally because of the animation  
+
+  // useEffect(() => {
+  //   (() => {
+  //     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  //   })();
+  // }, [messages]);
 
   return (
     <div
@@ -28,7 +30,7 @@ const Messages: React.FC<{ messages: Message[] }> = ({ messages }) => {
           key={index}
         >
           <p className="px-2 text-[13px] mt-2 sm:text-base break-words hyphens-auto">
-            {message.text}
+            {message?.text}
           </p>
 
           <p
@@ -36,8 +38,8 @@ const Messages: React.FC<{ messages: Message[] }> = ({ messages }) => {
               index % 2 === 0 ? 'bg-slate-200' : 'bg-white'
             }`}
           >
-            <span className="font-semibold">Sent by {message.name + '  '}</span>
-            <span className="ml-2">{formatDate(message.time)}</span>
+            <span className="font-semibold">Sent by {message?.name + '  '}</span>
+            <span className="ml-2">{formatDate(message?.time)}</span>
           </p>
         </div>
       ))}

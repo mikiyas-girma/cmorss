@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Box from "../components/gameRoom/Box";
 import GameEnd from "../components/gameRoom/GameEnd";
 import { checkWinner } from "../utils/checkWinner";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useGame } from "../hooks/useGame";
 import { Board } from "../types";
 import LocalGame from "../components/gameRoom/LocalGame";
@@ -18,7 +18,6 @@ const GameRoom: React.FC = () => {
   const initScore = { O: 0, X: 0, draw: 0 };
 
   const [score, setScore] = useState(initScore);
-  const pathName = useLocation().pathname;
 
   const { gameState, setGameState } = useGame();
   const { board, currentPlayer, winner } = gameState;
@@ -62,7 +61,7 @@ const GameRoom: React.FC = () => {
 
   // Determine if game state is at a draw
   const isADraw = !board.includes(null);
-  const isAbleToChat = pathName.includes("/game/");
+  const isAbleToChat = id !== "ai" && id !== "friend";
 
   // Return JSX For View
   return (
