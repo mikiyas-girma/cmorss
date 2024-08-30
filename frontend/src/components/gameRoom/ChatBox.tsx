@@ -52,13 +52,8 @@ const ChatBox = () => {
       setShowChatBox(true);
     });
 
-    socket.on("error", (error: { message: string }) => {
-      console.error("SENDING MESSAGE ERROR: ", error.message);
-    });
-
     return () => {
       socket.off("messageSent");
-      socket.off("error");
     };
   }, [socket]);
 
