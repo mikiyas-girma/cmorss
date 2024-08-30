@@ -11,6 +11,7 @@ import OnlineGame from "../components/gameRoom/OnlineGame";
 import { useAppState } from "../hooks/useAppState";
 import { updateAIGameScore } from "../utils/updateAppState";
 import ChatBox from "../components/gameRoom/ChatBox";
+import { useSocket } from "../hooks/useSocket";
 
 const initialBoard: Board = Array(9).fill(null);
 
@@ -18,11 +19,13 @@ const GameRoom: React.FC = () => {
   const initScore = { O: 0, X: 0, draw: 0 };
 
   const [score, setScore] = useState(initScore);
+  const [waitinRestart, setWaitingRestart] = useState(false);
 
   const { gameState, setGameState } = useGame();
   const { board, currentPlayer, winner } = gameState;
 
   const { id } = useParams();
+  const { socket } = useSocket();
   const { app, setAppState } = useAppState();
 
   // Observe Board and find Winner
@@ -105,6 +108,8 @@ const GameRoom: React.FC = () => {
         <OnlineGame
           gameState={gameState}
           setGameState={setGameState}
+          waitinRestart={waitinRestart}
+          setWaitingRestart={setWaitingRestart}
           roomId={id}
         />
       )}
@@ -117,6 +122,12 @@ const GameRoom: React.FC = () => {
           onRestart={() => {
             if (isADraw && id !== "ai")
               setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
+
+            const isOnline = id !== "ai" && id !== "friend";
+            if (isOnline) {
+              setWaitingRestart(true);
+              socket?.emit("requestRestart", id);
+            }
             resetGame();
           }}
           onExit={resetGame}
