@@ -10,6 +10,8 @@ import AIGame from "../components/gameRoom/AIGame";
 import OnlineGame from "../components/gameRoom/OnlineGame";
 import { useAppState } from "../hooks/useAppState";
 import { updateAIGameScore } from "../utils/updateAppState";
+import ChatBox from "../components/gameRoom/ChatBox";
+import { useSocket } from "../hooks/useSocket";
 
 const initialBoard: Board = Array(9).fill(null);
 
@@ -17,11 +19,13 @@ const GameRoom: React.FC = () => {
   const initScore = { O: 0, X: 0, draw: 0 };
 
   const [score, setScore] = useState(initScore);
+  const [waitinRestart, setWaitingRestart] = useState(false);
 
   const { gameState, setGameState } = useGame();
   const { board, currentPlayer, winner } = gameState;
 
   const { id } = useParams();
+  const { socket } = useSocket();
   const { app, setAppState } = useAppState();
 
   // Observe Board and find Winner
@@ -53,8 +57,14 @@ const GameRoom: React.FC = () => {
     }));
   };
 
+  //reset game state on unmount
+  useEffect(() => {
+    return () => resetGame();
+  }, []);
+
   // Determine if game state is at a draw
   const isADraw = !board.includes(null);
+  const isAbleToChat = id !== "ai" && id !== "friend";
 
   // Return JSX For View
   return (
@@ -64,7 +74,7 @@ const GameRoom: React.FC = () => {
           GAME STATS
         </p>
 
-        <div className="w-full grid grid-cols-3 place-items-center">
+        <div className="w-full px-4 grid grid-cols-4 gap-2 place-items-center">
           <Box
             top="Score"
             score={(score.X + "").padStart(2, "0")}
@@ -82,6 +92,12 @@ const GameRoom: React.FC = () => {
             bottom="Player O"
             color={"green"}
           />
+
+          <Box
+            bottom="Turn"
+            score={`${currentPlayer}`}
+            color={currentPlayer === "X" ? "orange" : "green"}
+          />
         </div>
       </div>
       {id === "friend" ? (
@@ -92,14 +108,12 @@ const GameRoom: React.FC = () => {
         <OnlineGame
           gameState={gameState}
           setGameState={setGameState}
+          waitinRestart={waitinRestart}
+          setWaitingRestart={setWaitingRestart}
           roomId={id}
         />
       )}
-      <Box
-        bottom="Turn"
-        score={`${currentPlayer}`}
-        color={currentPlayer === "X" ? "orange" : "green"}
-      />
+
       {(isADraw || winner) && (
         <GameEnd
           board={board}
@@ -108,11 +122,19 @@ const GameRoom: React.FC = () => {
           onRestart={() => {
             if (isADraw && id !== "ai")
               setScore((prev) => ({ ...prev, draw: prev.draw + 1 }));
+
+            const isOnline = id !== "ai" && id !== "friend";
+            if (isOnline) {
+              setWaitingRestart(true);
+              socket?.emit("requestRestart", id);
+            } else
             resetGame();
           }}
           onExit={resetGame}
         />
       )}
+      {/* Chat Component */}
+      {isAbleToChat && <ChatBox />}
     </div>
   );
 };

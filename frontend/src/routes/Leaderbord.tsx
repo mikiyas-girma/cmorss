@@ -75,11 +75,11 @@ const Leaderboard: React.FC = () => {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center gap-5 font-poppins">
-      <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-primary-blue md:text-5xl lg:text-6xl dark:text-white">Leaderboard</h1>
+      <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-primary-blue md:text-5xl lg:text-6xl">Leaderboard</h1>
       <table
-        className="relative w-4/5 max-w-[700px] text-right text-sm font-light text-surface dark:text-white">
+        className="relative w-4/5 max-w-[700px] text-right text-sm font-light text-surface">
         <thead
-          className="border-b border-neutral-200 bg-secondary-blue font-medium text-white dark:border-white/10 sticky top-0">
+          className="border-b border-neutral-200 bg-secondary-blue font-medium text-white sticky top-0">
           <tr>
             <th scope="col" className=" px-6 py-4">Rank</th>
             <th scope="col" className=" px-6 py-4 w-3/6 text-left">Username</th>
@@ -93,7 +93,7 @@ const Leaderboard: React.FC = () => {
 						const isLastPlayer = players.length === index + 1;
 						return (
 							<tr
-								className={`border-b border-neutral-200 dark:border-white/10 
+								className={`border-b border-neutral-200 dark:border-white/10 text-neutral-900
 									${index % 2 == 0 ? 'bg-black/[0.02]': 'bg-white dark:bg-body-dark'}`}
 								ref={isLastPlayer ? lastPlayerElementRef : undefined} key={player._id}
 							>

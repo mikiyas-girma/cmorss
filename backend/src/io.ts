@@ -1,8 +1,20 @@
-import http from 'http';
-import { Server, Socket } from 'socket.io';
-import { SocketEvent } from './utils/socketEvents.js';
+import http from "http";
+import { Server, Socket } from "socket.io";
+import { SocketEvent } from "./utils/socketEvents.js";
+
+type Message = {
+  name: string;
+  text: string;
+  time: string;
+};
 
 let cachedIo: Server | null = null;
+const roomSize = 2;
+const waitingQueue: string[] = [];
+
+function getRoom(roomId: string) {
+  return cachedIo?.sockets.adapter.rooms.get(roomId);
+}
 
 async function joinSocketToRoom(
   socket: Socket,
@@ -13,28 +25,25 @@ async function joinSocketToRoom(
     await socket.join(roomId);
     console.log(`User ${socket.id} joined room ${roomId}`);
     cachedIo?.to(roomId).emit(SocketEvent.ROOM_JOINED, socket.id, avatar);
+    const room = getRoom(roomId);
+    if (room && room.size === roomSize) {
+      console.log(`Room ${roomId} is full.`);
+      cachedIo?.to(roomId).emit(SocketEvent.ROOM_FULL, Array.from(room));
+    }
   } catch (error) {
     console.error(`Invalid room id: ${roomId}`);
     socket.emit(SocketEvent.ERROR, { error });
   }
 }
 
-function getRoom(roomId: string) {
-  return !!cachedIo?.sockets.adapter.rooms.has(roomId);
-}
-
-const roomSize = 2;
 function canJoinRoom(socket: Socket, roomId: string) {
-  if (getRoom(roomId)) {
-    const room = cachedIo?.sockets.adapter.rooms.get(roomId);
-
-    if (room && room.size < roomSize) {
-      return true;
-    } else {
-      console.error(`Room ${roomId} is full.`);
-      socket.emit(SocketEvent.ERROR, { message: 'Room is full.' });
-      return false;
-    }
+  const room = getRoom(roomId);
+  if (room && room.size < roomSize) {
+    return true;
+  } else {
+    console.error(`Room ${roomId} is full.`);
+    socket.emit(SocketEvent.ERROR, { message: "Room is full." });
+    return false;
   }
 }
 
@@ -53,33 +62,33 @@ function initSocketIo(
   } else {
     cachedIo = new Server(httpServerInstance, {
       cors: {
-        origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+        origin: process.env.CORS_ORIGIN || "http://localhost:5173",
       },
     });
 
     cachedIo.on(SocketEvent.CONNECTION, (socket) => {
-      console.log('A user connected');
+      console.log("A user connected");
       //TODO: Manage user session
 
       socket.on(SocketEvent.CREATE_ROOM, async (roomId: string) => {
-        const roomExists = getRoom(roomId);
+        const roomExists = !!getRoom(roomId);
 
         if (roomExists) {
           console.error(`Room ${roomId} already exist.`);
-          socket.emit(SocketEvent.ERROR, { message: 'Room already exist.' });
+          socket.emit(SocketEvent.ERROR, { message: "Room already exist." });
         } else {
-          joinSocketToRoom(socket, roomId, 'X');
+          joinSocketToRoom(socket, roomId, "X");
         }
       });
 
-      socket.on(SocketEvent.JOIN_ROOM, async (roomId: string) => {
-        const roomExists = getRoom(roomId);
+      socket.on(SocketEvent.JOIN_ROOM, async (roomId: string, avatar: string) => {
+        const roomExists = !!getRoom(roomId);
 
         if (!roomExists) {
           console.error(`Room ${roomId} does not exist.`);
-          socket.emit(SocketEvent.ERROR, { message: 'Room does not exist.' });
+          socket.emit(SocketEvent.ERROR, { message: "Room does not exist." });
         } else {
-          canJoinRoom(socket, roomId) && joinSocketToRoom(socket, roomId, 'O');
+          canJoinRoom(socket, roomId) && joinSocketToRoom(socket, roomId, "O");
         }
       });
 
@@ -97,32 +106,104 @@ function initSocketIo(
             if (!emited) {
               console.error(`Failled to emit event for user ${socket.id}`);
               socket.emit(SocketEvent.ERROR, {
-                message: 'Move made not shared.',
+                message: "Move made not shared.",
               });
             }
           }
         }
       );
 
-      socket.on(SocketEvent.DISCONNECT, () => {
-        console.log('User disconnected');
+      socket.on(
+        SocketEvent.SEND_MESSAGE,
+        (data: { message: Message; roomId: string }) => {
+          console.log("MESSAGE");
+          if (!!getRoom(data.roomId)) {
+            const emited = cachedIo
+              ?.to(data.roomId)
+              .emit(SocketEvent.MESSAGE_SENT, data.message, socket.id);
+
+            if (!emited) {
+              console.error(`Failled to emit event for user ${socket.id}`);
+              socket.emit(SocketEvent.ERROR, {
+                message: "Unable to send message.",
+              });
+            }
+          }
+        }
+      );
+
+      socket.on(SocketEvent.REQUEST_RESTART, (roomId: string) => {
+        console.log("Restart requested by", socket.id);
+        if (socket.rooms.has(roomId)) {
+          socket.to(roomId).emit(SocketEvent.RESTART_REQUESTED, socket.id);
+        } else {
+          console.error(`User ${socket.id} is not in room ${roomId}`);
+          socket.emit(SocketEvent.ERROR, {
+            message: "You are not in the room.",
+          });
+        }
       });
 
-      // socket.on(SocketEvent.DELETE_ROOM, (roomId: string) => {
-      // 	const room = getRoom(roomId);
+      socket.on(SocketEvent.RESTART_GAME, (roomId: string) => {
+        console.log("Game restarted", roomId);
+        if (socket.rooms.has(roomId)) {
+          cachedIo?.to(roomId).emit(SocketEvent.GAME_RESTARTED);
+        } else {
+          console.error(`User ${socket.id} is not in room ${roomId}`);
+          socket.emit(SocketEvent.ERROR, {
+            message: "You are not in the room.",
+          });
+        }
+      });
 
-      // 	if (room) {
-      // 			cachedIo.sockets.adapter.rooms.delete(roomId);
+      socket.on(SocketEvent.FIND_MATCH, () => {
+        if (waitingQueue.length > 0) {
+          const opponentSocketId = waitingQueue.shift(); // Get the first waiting player
+          const roomId = socket.id + "~" + opponentSocketId;
 
-      // 			console.log(`Room ${roomId} deleted`);
-      // 			cachedIo.to(roomId).emit('roomDeleted', { message: 'The room has been deleted.' });
-      // 	} else {
-      // 			console.error(`Room ${roomId} does not exist.`);
-      // 			socket.emit('error', { message: 'Room does not exist.' });
-      // 	}
-      // });
+          if (opponentSocketId) {
+            // Notify both players that they have been matched
+            console.log("Match found", roomId);
+            socket.emit(SocketEvent.MATCH_FOUND, { roomId, opponent: opponentSocketId });
+            cachedIo
+              ?.to(opponentSocketId)
+              .emit(SocketEvent.MATCH_FOUND, { roomId, opponent: socket.id });
+          }
+        } else {
+          // If no players are waiting, add the current player to the queue
+          waitingQueue.push(socket.id);
+        }
+      });
+
+      socket.on("disconnect", () => {
+        console.log(socket.id, "has disconnected");
+        removeFromQueue(waitingQueue, socket.id);
+        cachedIo?.emit("disconnected", socket.id);
+      });
+
+      socket.on(SocketEvent.DELETE_ROOM, (roomId: string) => {
+        const room = getRoom(roomId);
+        removeFromQueue(waitingQueue, socket.id);
+        if (room) {
+          cachedIo
+            ?.to(roomId)
+            .emit("roomDeleted", { message: "The room has been deleted." });
+          cachedIo?.sockets.adapter.rooms.delete(roomId);
+          console.log(`Room ${roomId} deleted`);
+        } else {
+          console.error(`Room ${roomId} does not exist.`);
+          socket.emit("error", { message: "Room does not exist." });
+        }
+      });
     });
     return cachedIo;
+  }
+}
+
+function removeFromQueue(queue: string[], id: string) {
+  const index = queue.indexOf(id);
+  if (index > -1) {
+    queue.splice(index, 1);
   }
 }
 

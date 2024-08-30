@@ -3,10 +3,8 @@ import io, { Socket } from 'socket.io-client';
 import { useGame } from '../hooks/useGame';
 import { cellClick } from '../utils/cellClick';
 
-
 const socketServerUrl = import.meta.env.VITE_SOCKET_SERVER;
-const SOCKET_URL = socketServerUrl|| "http://localhost:3000";
-
+const SOCKET_URL = socketServerUrl || 'http://localhost:3000';
 
 interface SocketContextProps {
   socket: Socket | null;

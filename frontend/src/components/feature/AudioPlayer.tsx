@@ -29,7 +29,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
 
   //   Return JSX
   return (
-    <div className="absolute top-5 right-3 w-[50px] sm:w-[80px]">
+    <div className="absolute top-5 sm:top-6 right-3 w-[50px]">
       <audio
         loop
         ref={audioRef}
@@ -55,7 +55,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioSrc }) => {
       </button>
 
       {!isPlaying && (
-        <button className="w-[16px] h-[16px] sm:w-[25px] sm:h-[25px] bg-red-600 absolute text-white top-8 sm:top-14 rounded-full right-6 text-xs sm:text-base">
+        <button className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] bg-red-600 absolute text-white top-5 sm:top-10 rounded-full right-6 text-xs">
           X
         </button>
       )}
