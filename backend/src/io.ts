@@ -131,6 +131,30 @@ function initSocketIo(
         }
       );
 
+      socket.on(SocketEvent.REQUEST_RESTART, (roomId: string) => {
+        console.log("Restart requested by", socket.id);
+        if (socket.rooms.has(roomId)) {
+          socket.to(roomId).emit(SocketEvent.RESTART_REQUESTED, socket.id);
+        } else {
+          console.error(`User ${socket.id} is not in room ${roomId}`);
+          socket.emit(SocketEvent.ERROR, {
+            message: "You are not in the room.",
+          });
+        }
+      });
+
+      socket.on(SocketEvent.RESTART_GAME, (roomId: string) => {
+        console.log("Game restarted", roomId);
+        if (socket.rooms.has(roomId)) {
+          cachedIo?.to(roomId).emit(SocketEvent.GAME_RESTARTED);
+        } else {
+          console.error(`User ${socket.id} is not in room ${roomId}`);
+          socket.emit(SocketEvent.ERROR, {
+            message: "You are not in the room.",
+          });
+        }
+      });
+
       socket.on("disconnect", () => {
         console.log(socket.id, "has disconnected");
         cachedIo?.emit("disconnected", socket.id);
