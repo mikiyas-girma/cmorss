@@ -10,6 +10,7 @@ type Message = {
 
 let cachedIo: Server | null = null;
 const roomSize = 2;
+const waitingQueue: string[] = [];
 
 function getRoom(roomId: string) {
   return cachedIo?.sockets.adapter.rooms.get(roomId);
@@ -80,7 +81,7 @@ function initSocketIo(
         }
       });
 
-      socket.on(SocketEvent.JOIN_ROOM, async (roomId: string) => {
+      socket.on(SocketEvent.JOIN_ROOM, async (roomId: string, avatar: string) => {
         const roomExists = !!getRoom(roomId);
 
         if (!roomExists) {
@@ -155,14 +156,34 @@ function initSocketIo(
         }
       });
 
+      socket.on(SocketEvent.FIND_MATCH, () => {
+        if (waitingQueue.length > 0) {
+          const opponentSocketId = waitingQueue.shift(); // Get the first waiting player
+          const roomId = socket.id + "~" + opponentSocketId;
+
+          if (opponentSocketId) {
+            // Notify both players that they have been matched
+            console.log("Match found", roomId);
+            socket.emit(SocketEvent.MATCH_FOUND, { roomId, opponent: opponentSocketId });
+            cachedIo
+              ?.to(opponentSocketId)
+              .emit(SocketEvent.MATCH_FOUND, { roomId, opponent: socket.id });
+          }
+        } else {
+          // If no players are waiting, add the current player to the queue
+          waitingQueue.push(socket.id);
+        }
+      });
+
       socket.on("disconnect", () => {
         console.log(socket.id, "has disconnected");
+        removeFromQueue(waitingQueue, socket.id);
         cachedIo?.emit("disconnected", socket.id);
       });
 
       socket.on(SocketEvent.DELETE_ROOM, (roomId: string) => {
         const room = getRoom(roomId);
-
+        removeFromQueue(waitingQueue, socket.id);
         if (room) {
           cachedIo
             ?.to(roomId)
@@ -176,6 +197,13 @@ function initSocketIo(
       });
     });
     return cachedIo;
+  }
+}
+
+function removeFromQueue(queue: string[], id: string) {
+  const index = queue.indexOf(id);
+  if (index > -1) {
+    queue.splice(index, 1);
   }
 }
 

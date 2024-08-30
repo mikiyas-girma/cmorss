@@ -1,31 +1,35 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useSocket } from "../hooks/useSocket";
 import { useEffect, useState } from "react";
 
 const Waiting = () => {
   const [playerCount, setPlayerCount] = useState(1);
-
   const { socket } = useSocket();
 
-  const query = new URLSearchParams(useLocation().search);
-  const roomId = query.get("room_id");
   const navigate = useNavigate();
-  console.log(roomId);
 
   useEffect(() => {
-    if (!socket || !roomId) return;
+    if (!socket) return;
 
-    socket.on("roomFull", () => {
+    socket.on("matchFound", ({ roomId }) => {
+      console.log("match found", roomId);
       setPlayerCount(2);
-      setTimeout(() => {
+      if (socket.id === roomId.split("~")[1]) {
+        socket.emit("createRoom", roomId);
         navigate(`/game/${roomId}`);
-      }, 3000);
+      }
+      setTimeout(() => {
+        if (socket.id === roomId.split("~")[0]) {
+          navigate(`/game/${roomId}`);
+        }
+        
+      }, 2000);
     });
 
     return () => {
-      socket.off("roomFull");
+      socket.off("matchFound");
     };
-  }, [socket, roomId, navigate]);
+  });
 
   return (
     <div className="text-white text-2xl backdrop-blur-2xl rounded-lg border-4 border-white py-10 px-20 text-center">

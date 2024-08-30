@@ -14,6 +14,8 @@ export enum SocketEvent {
 	RESTART_REQUESTED = 'restartRequested', // Event emited when a user ask for a game restart
 	RESTART_GAME = 'restartGame', // Event raised when a user ask for a game restart
 	GAME_RESTARTED = 'gameRestarted', // Event emited when a game is restarted
+	FIND_MATCH = 'findMatch', // Event raised when a user ask for a match
+	MATCH_FOUND = 'matchFound', // Event emited when a match is found
 	DELETE_ROOM = 'deleteRoom', // Event raised when a user stop a room
 	ROOM_DELETED = 'roomDeleted', // Event emited when a room is correctly deleted
 	ERROR = 'error', // Event emited when an error occurs

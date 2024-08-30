@@ -14,17 +14,21 @@ interface OnlineGameProps {
   setWaitingRestart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const OnlineGame = ({ gameState, setGameState, roomId, waitinRestart, setWaitingRestart }: OnlineGameProps) => {
+const OnlineGame = ({
+  gameState,
+  setGameState,
+  waitinRestart,
+  setWaitingRestart,
+  roomId,
+}: OnlineGameProps) => {
   const [playerCount, setPlayerCount] = useState(1);
   const [loading, setLoading] = useState(true);
   const [opponent, setOpponent] = useState("");
   const [hasLeft, setHasLeft] = useState(false);
   const [restartRequested, setRestartRequested] = useState(false);
-  
 
   const { socket } = useSocket();
   const { board, currentPlayer, winner, avatar } = gameState;
-
   const navigate = useNavigate();
 
   const handleCellClick = (position: number) => {
@@ -35,21 +39,29 @@ const OnlineGame = ({ gameState, setGameState, roomId, waitinRestart, setWaiting
     socket?.emit("makeMove", { position, roomId });
   };
 
-  const initiateGame = () => {
+  const initiateGame = (delai = 2000) => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-    }, 2000);
+    }, delai);
   };
+
+  useEffect(() => {
+    if (!socket || !roomId) return;
+    if (roomId.includes("~")) {
+      if (socket.id === roomId.split("~")[0]) socket.emit("joinRoom", roomId);
+    }
+  }, []);
 
   useEffect(() => {
     if (!socket || !roomId) return;
 
     socket.on("roomFull", (players) => {
+      console.log("room full", players);
       players = players.filter((player: string) => player !== socket?.id);
       setOpponent(players[0]);
       setPlayerCount(2);
-      initiateGame();
+      initiateGame(3000);
     });
 
     socket.on("roomDeleted", () => {
@@ -65,6 +77,12 @@ const OnlineGame = ({ gameState, setGameState, roomId, waitinRestart, setWaiting
     socket.on("gameRestarted", () => {
       console.log("game restarted");
       setWaitingRestart(false);
+      setGameState((prev) => ({
+        ...prev,
+        board: Array(9).fill(null),
+        currentPlayer: prev.currentPlayer === "O" ? "O" : "X",
+        winner: null,
+      }));
       initiateGame();
     });
 
@@ -81,7 +99,7 @@ const OnlineGame = ({ gameState, setGameState, roomId, waitinRestart, setWaiting
       socket.off("gameRestarted");
       socket.off("disconnected");
     };
-  }, [socket, roomId, opponent, setWaitingRestart]);
+  }, [socket, roomId, opponent, setWaitingRestart, navigate, setGameState]);
 
   const handleDisconnect = () => {
     console.log("Disconnected from game");
@@ -112,11 +130,14 @@ const OnlineGame = ({ gameState, setGameState, roomId, waitinRestart, setWaiting
                 ) : waitinRestart ? (
                   <p>Waiting for Opponent...</p>
                 ) : (
-                  <p>Starting...</p>
+                  <>
+                    <p>You joined as {gameState.avatar}</p>
+                    <p>Starting...</p>
+                  </>
                 )}
-                {!waitinRestart && <p>{playerCount}/2</p>}
+                {playerCount < 2 && <p>{playerCount}/2</p>}
               </div>
-              {playerCount < 2 || waitinRestart && (
+              {(playerCount < 2 || waitinRestart) && (
                 <Button
                   text="Exit Game"
                   size="full"
@@ -156,12 +177,6 @@ const OnlineGame = ({ gameState, setGameState, roomId, waitinRestart, setWaiting
               onClick={() => {
                 setRestartRequested(false);
                 initiateGame();
-                setGameState({
-                  board: Array(9).fill(null),
-                  currentPlayer: "X",
-                  winner: null,
-                  avatar: "X",
-                });
                 socket?.emit("restartGame", roomId);
               }}
               className="text-black p-2 rounded-lg"
