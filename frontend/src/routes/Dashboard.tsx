@@ -4,10 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useAppState } from '../hooks/useAppState';
 import { useState } from 'react';
 import Modal from '../components/common/Modal';
+import { useSocket } from '../hooks/useSocket';
 
 const Dashboard = () => {
   const [playOnline, setPlayOnline] = useState(false);
-
+  const { socket } = useSocket();
   const navigate = useNavigate();
   const { app, setAppState } = useAppState();
 
@@ -63,7 +64,10 @@ const Dashboard = () => {
                 text="Play with Random"
                 color="blue"
                 size="full"
-                onClick={() => navigate('/room/wait')}
+                onClick={() => {
+                  socket?.emit('findMatch');
+                  navigate('/room/wait')
+                }}
                 className="min-w-[280px]"
               />
               <Button

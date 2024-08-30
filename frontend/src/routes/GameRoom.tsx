@@ -127,7 +127,7 @@ const GameRoom: React.FC = () => {
             if (isOnline) {
               setWaitingRestart(true);
               socket?.emit("requestRestart", id);
-            }
+            } else
             resetGame();
           }}
           onExit={resetGame}
