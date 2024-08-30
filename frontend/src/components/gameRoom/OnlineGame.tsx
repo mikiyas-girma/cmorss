@@ -10,17 +10,25 @@ interface OnlineGameProps {
   gameState: GameState;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   roomId: string | undefined;
+  waitinRestart: boolean;
+  setWaitingRestart: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const OnlineGame = ({ gameState, setGameState, roomId }: OnlineGameProps) => {
+const OnlineGame = ({
+  gameState,
+  setGameState,
+  waitinRestart,
+  setWaitingRestart,
+  roomId,
+}: OnlineGameProps) => {
   const [playerCount, setPlayerCount] = useState(1);
   const [loading, setLoading] = useState(true);
   const [opponent, setOpponent] = useState("");
   const [hasLeft, setHasLeft] = useState(false);
+  const [restartRequested, setRestartRequested] = useState(false);
 
   const { socket } = useSocket();
   const { board, currentPlayer, winner, avatar } = gameState;
-
   const navigate = useNavigate();
 
   const handleCellClick = (position: number) => {
@@ -31,22 +39,51 @@ const OnlineGame = ({ gameState, setGameState, roomId }: OnlineGameProps) => {
     socket?.emit("makeMove", { position, roomId });
   };
 
+  const initiateGame = (delai = 2000) => {
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, delai);
+  };
+
+  useEffect(() => {
+    if (!socket || !roomId) return;
+    if (roomId.includes("~")) {
+      if (socket.id === roomId.split("~")[0]) socket.emit("joinRoom", roomId);
+    }
+  }, []);
+
   useEffect(() => {
     if (!socket || !roomId) return;
 
     socket.on("roomFull", (players) => {
-      players = players.filter((player: string) => player !== socket.id);
+      console.log("room full", players);
+      players = players.filter((player: string) => player !== socket?.id);
       setOpponent(players[0]);
       setPlayerCount(2);
-      setLoading(true);
-      setTimeout(() => {
-        setLoading(false);
-      }, 2000);
+      initiateGame(3000);
     });
 
     socket.on("roomDeleted", () => {
       //console.log("your opponent has left the game");
       setHasLeft(true);
+    });
+
+    socket.on("restartRequested", (fromPlayer) => {
+      console.log("restart requested from", fromPlayer);
+      setRestartRequested(true);
+    });
+
+    socket.on("gameRestarted", () => {
+      console.log("game restarted");
+      setWaitingRestart(false);
+      setGameState((prev) => ({
+        ...prev,
+        board: Array(9).fill(null),
+        currentPlayer: prev.currentPlayer === "O" ? "O" : "X",
+        winner: null,
+      }));
+      initiateGame();
     });
 
     socket.on("disconnected", (id) => {
@@ -57,8 +94,12 @@ const OnlineGame = ({ gameState, setGameState, roomId }: OnlineGameProps) => {
 
     return () => {
       socket.off("roomFull");
+      socket.off("roomDeleted");
+      socket.off("restartRequested");
+      socket.off("gameRestarted");
+      socket.off("disconnected");
     };
-  }, [socket, roomId, opponent]);
+  }, [socket, roomId, opponent, setWaitingRestart, navigate, setGameState]);
 
   const handleDisconnect = () => {
     console.log("Disconnected from game");
@@ -79,19 +120,24 @@ const OnlineGame = ({ gameState, setGameState, roomId }: OnlineGameProps) => {
   return (
     <div>
       <GameBoard board={board} handleCellClick={handleCellClick} />
-      {loading && (
+      {(loading || waitinRestart) && (
         <Modal>
           {
             <div className="text-white text-2xl backdrop-blur-2xl rounded-lg border-4 border-white py-10 px-20 text-center space-y-5">
               <div>
                 {playerCount < 2 ? (
                   <p>Waiting for players...</p>
+                ) : waitinRestart ? (
+                  <p>Waiting for Opponent...</p>
                 ) : (
-                  <p>Starting...</p>
+                  <>
+                    <p>You joined as {gameState.avatar}</p>
+                    <p>Starting...</p>
+                  </>
                 )}
-                <p>{playerCount}/2</p>
+                {playerCount < 2 && <p>{playerCount}/2</p>}
               </div>
-              {playerCount < 2 && (
+              {(playerCount < 2 || waitinRestart) && (
                 <Button
                   text="Exit Game"
                   size="full"
@@ -116,6 +162,34 @@ const OnlineGame = ({ gameState, setGameState, roomId }: OnlineGameProps) => {
                 navigate("/dashboard");
               }}
               className=" text-black p-2 rounded-lg"
+            />
+          </div>
+        </Modal>
+      )}
+      {restartRequested && (
+        <Modal>
+          <div className="text-white text-2xl backdrop-blur-2xl rounded-lg border-4 border-white py-10 px-20 text-center space-y-5">
+            <p>Your opponent wants to Play Again!</p>
+            <Button
+              text="Play Again"
+              size="full"
+              color="blue"
+              onClick={() => {
+                setRestartRequested(false);
+                initiateGame();
+                socket?.emit("restartGame", roomId);
+              }}
+              className="text-black p-2 rounded-lg"
+            />
+            <Button
+              text="Exit Game"
+              size="full"
+              color="red"
+              onClick={() => {
+                setRestartRequested(false);
+                navigate("/dashboard");
+              }}
+              className="text-black p-2 rounded-lg"
             />
           </div>
         </Modal>

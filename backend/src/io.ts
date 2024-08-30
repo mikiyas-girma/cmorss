@@ -10,6 +10,7 @@ type Message = {
 
 let cachedIo: Server | null = null;
 const roomSize = 2;
+const waitingQueue: string[] = [];
 
 function getRoom(roomId: string) {
   return cachedIo?.sockets.adapter.rooms.get(roomId);
@@ -80,7 +81,7 @@ function initSocketIo(
         }
       });
 
-      socket.on(SocketEvent.JOIN_ROOM, async (roomId: string) => {
+      socket.on(SocketEvent.JOIN_ROOM, async (roomId: string, avatar: string) => {
         const roomExists = !!getRoom(roomId);
 
         if (!roomExists) {
@@ -131,14 +132,58 @@ function initSocketIo(
         }
       );
 
+      socket.on(SocketEvent.REQUEST_RESTART, (roomId: string) => {
+        console.log("Restart requested by", socket.id);
+        if (socket.rooms.has(roomId)) {
+          socket.to(roomId).emit(SocketEvent.RESTART_REQUESTED, socket.id);
+        } else {
+          console.error(`User ${socket.id} is not in room ${roomId}`);
+          socket.emit(SocketEvent.ERROR, {
+            message: "You are not in the room.",
+          });
+        }
+      });
+
+      socket.on(SocketEvent.RESTART_GAME, (roomId: string) => {
+        console.log("Game restarted", roomId);
+        if (socket.rooms.has(roomId)) {
+          cachedIo?.to(roomId).emit(SocketEvent.GAME_RESTARTED);
+        } else {
+          console.error(`User ${socket.id} is not in room ${roomId}`);
+          socket.emit(SocketEvent.ERROR, {
+            message: "You are not in the room.",
+          });
+        }
+      });
+
+      socket.on(SocketEvent.FIND_MATCH, () => {
+        if (waitingQueue.length > 0) {
+          const opponentSocketId = waitingQueue.shift(); // Get the first waiting player
+          const roomId = socket.id + "~" + opponentSocketId;
+
+          if (opponentSocketId) {
+            // Notify both players that they have been matched
+            console.log("Match found", roomId);
+            socket.emit(SocketEvent.MATCH_FOUND, { roomId, opponent: opponentSocketId });
+            cachedIo
+              ?.to(opponentSocketId)
+              .emit(SocketEvent.MATCH_FOUND, { roomId, opponent: socket.id });
+          }
+        } else {
+          // If no players are waiting, add the current player to the queue
+          waitingQueue.push(socket.id);
+        }
+      });
+
       socket.on("disconnect", () => {
         console.log(socket.id, "has disconnected");
+        removeFromQueue(waitingQueue, socket.id);
         cachedIo?.emit("disconnected", socket.id);
       });
 
       socket.on(SocketEvent.DELETE_ROOM, (roomId: string) => {
         const room = getRoom(roomId);
-
+        removeFromQueue(waitingQueue, socket.id);
         if (room) {
           cachedIo
             ?.to(roomId)
@@ -152,6 +197,13 @@ function initSocketIo(
       });
     });
     return cachedIo;
+  }
+}
+
+function removeFromQueue(queue: string[], id: string) {
+  const index = queue.indexOf(id);
+  if (index > -1) {
+    queue.splice(index, 1);
   }
 }
 
