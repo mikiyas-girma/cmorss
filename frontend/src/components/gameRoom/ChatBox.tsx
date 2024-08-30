@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { chatIcon } from "../../assets";
-import Button from "../common/Button";
-import { Message } from "../../types";
-import Messages from "./Messages";
-import { useAppState } from "../../hooks/useAppState";
-import { useSocket } from "../../hooks/useSocket";
-import { useParams } from "react-router-dom";
+
+import React, { useEffect, useState } from 'react';
+import { chatIcon } from '../../assets';
+import Button from '../common/Button';
+import { Message } from '../../types';
+import Messages from './Messages';
+import { useAppState } from '../../hooks/useAppState';
+import { useSocket } from '../../hooks/useSocket';
+import { useParams } from 'react-router-dom';
 
 /**
  * ChatBox
@@ -14,6 +15,7 @@ import { useParams } from "react-router-dom";
 const ChatBox = () => {
   const { app } = useAppState();
   const [showChatBox, setShowChatBox] = useState(false);
+  const [text, setText] = useState('');
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
@@ -34,6 +36,7 @@ const ChatBox = () => {
     setMessages((prev) => {
       return [...prev, msg];
     });
+
     setText("");
   };
 
@@ -59,14 +62,18 @@ const ChatBox = () => {
 
   //   Return JSX
   return (
-    <div className="absolute bottom-3 right-5 font-poppins flex flex-col">
+    <div
+      className={`absolute bottom-3 right-5 font-poppins flex flex-col ${
+        showChatBox ? '' : 'w-[35px] md:w-[100px] bottom-7'
+      }`}
+    >
       {/* Chat Box Content */}
 
       <div
         className={`bg-primary-green backdrop-blur-md bg-opacity-60 px-4 pt-2 rounded-md relative  transition-all duration-500 ease-in-out ${
           showChatBox
-            ? "opacity-100 w-[92%] self-end sm:w-[400px] translate-x-0"
-            : "opacity-0  translate-x-[100%]"
+            ? 'opacity-100 w-[92%] self-end sm:w-[400px] translate-x-0'
+            : 'opacity-0  translate-x-[100%]'
         }`}
       >
         <p
