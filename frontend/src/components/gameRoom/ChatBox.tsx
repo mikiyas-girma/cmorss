@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { chatIcon } from '../../assets';
 import Button from '../common/Button';
@@ -15,6 +16,7 @@ const ChatBox = () => {
   const { app } = useAppState();
   const [showChatBox, setShowChatBox] = useState(false);
   const [text, setText] = useState('');
+  const [text, setText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
   const { socket } = useSocket();
@@ -24,21 +26,22 @@ const ChatBox = () => {
   const handleSendMessage = async () => {
     if (text.length < 1) return;
     const msg: Message = {
-      name: app.user?.pseudo || 'Player',
+      name: app.user?.pseudo || "Player",
       text,
       time: new Date().toISOString(),
     };
 
-    socket?.emit('sendMessage', { message: msg, roomId: id });
+    socket?.emit("sendMessage", { message: msg, roomId: id });
 
     setMessages((prev) => {
       return [...prev, msg];
     });
-    setText('');
+
+    setText("");
   };
 
   const handleEnterKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleSendMessage();
     }
   };
@@ -46,14 +49,14 @@ const ChatBox = () => {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('messageSent', (message: Message, user: string) => {
+    socket.on("messageSent", (message: Message, user: string) => {
       if (user === socket?.id) return;
       setMessages((prev) => [...prev, message]);
       setShowChatBox(true);
     });
 
     return () => {
-      socket.off('messageSent');
+      socket.off("messageSent");
     };
   }, [socket]);
 

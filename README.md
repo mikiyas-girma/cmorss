@@ -10,10 +10,10 @@ This was a collaborative projects of Six Software Enginggering Students of the A
 
 - [Rayane](https://github.com/RyanTk03)
 - [Stephen Omoregie](https://github.com/Cre8steveDev)
-- [Contributor 3](https://github.com/contributor3)
-- [Contributor 4](https://github.com/contributor4)
-- [Contributor 5](https://github.com/contributor5)
-- [Contributor 6](https://github.com/contributor6)
+- [Mikiyas](https://github.com/mikiyas-girma)
+- [Houssem Eddine](https://github.com/SeM2x)
+- [Christadrian Madegwa](https://github.com/Prish20)
+- [Onyango Ondigo](https://github.com/ondi20)
 
 ## Features
 
