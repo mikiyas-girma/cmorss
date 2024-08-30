@@ -15,7 +15,6 @@ import { useParams } from 'react-router-dom';
 const ChatBox = () => {
   const { app } = useAppState();
   const [showChatBox, setShowChatBox] = useState(false);
-  const [text, setText] = useState('');
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
 
